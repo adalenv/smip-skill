@@ -44,7 +44,17 @@ WEEKDAYS_AL = {
     6: "E Diel"
 }
 
-def load_holidays(cal_path=DEFAULT_CALENDAR_PATH):
+def load_holidays(year=2026, cal_path=DEFAULT_CALENDAR_PATH):
+    # Përdor holiday_finder për të gjetur automatikisht festat nëse mungon skedari
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from holiday_finder import resolve_all_holidays
+        holidays = resolve_all_holidays(year, auto_save=True, target_file=cal_path)
+        if holidays:
+            return holidays
+    except Exception as e:
+        pass
+
     holidays = set()
     if not os.path.exists(cal_path):
         return holidays
@@ -52,7 +62,7 @@ def load_holidays(cal_path=DEFAULT_CALENDAR_PATH):
         with open(cal_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             # Festa zyrtare
-            for f in data.get("festat_zyrtare_2026_2027", []):
+            for f in data.get("festat_zyrtare", []) + data.get("festat_zyrtare_2026_2027", []):
                 d = f.get("data")
                 if d:
                     holidays.add(d)
@@ -64,7 +74,7 @@ def load_holidays(cal_path=DEFAULT_CALENDAR_PATH):
                     d_start = datetime.datetime.strptime(fillimi, "%Y-%m-%d").date()
                     d_end = datetime.datetime.strptime(mbarimi, "%Y-%m-%d").date()
                     cur = d_start
-                    while cur <= d_end:
+                    while cur <= end:
                         holidays.add(cur.strftime("%Y-%m-%d"))
                         cur += datetime.timedelta(days=1)
     except Exception as e:
@@ -178,7 +188,7 @@ def get_school_days(year, month, days_config, holidays):
     return school_sessions
 
 def generate_plan(docx_path, grade, subject, year, month, days_config, start_index=0, holidays_file=DEFAULT_CALENDAR_PATH):
-    holidays = load_holidays(holidays_file)
+    holidays = load_holidays(year=year, cal_path=holidays_file)
     sessions = get_school_days(year, month, days_config, holidays)
     extracted_topics = extract_topics_from_docx(docx_path)
     

@@ -68,7 +68,7 @@ python3 .agents/skills/smip/scripts/find_curriculum.py --grade "<klasa>" --subje
 
 Përdorni skriptin [`parse_plan.py`](./scripts/parse_plan.py) për të:
 1. Nxjerrë të gjitha temat mësimore dhe situatat e parashikuara të të nxënit nga skedari `.docx`.
-2. Llogaritur datat e sakta të orëve duke përjashtuar fundjavat dhe festat zyrtare nga `smip_docs/kalendari_pushimeve.json`.
+2. Llogaritur datat e sakta të orëve duke përjashtuar fundjavat dhe festat zyrtare. Nëse kalendari nuk ekziston, motori [`holiday_finder.py`](./scripts/holiday_finder.py) i gjen automatikisht festat zyrtare online ose i llogarit algoritmikisht sipas ligjit shqiptar dhe e ruan vetë skedarin në `smip_docs/kalendari_pushimeve.json`.
 3. Përcaktuar numrin rendor të orës fillestare (`--start-index`) nëse muaji paraprak ka konsumuar një pjesë të temave.
 
 ```bash
