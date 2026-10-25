@@ -145,7 +145,7 @@ Agjenti ofron 3 mënyra të fuqishme integrimi:
 
 ## 📅 Kalendari Zyrtar dhe Pushimet (2026–2027)
 
-Ky mjet përmban të integruar [`kalendari_pushimeve.json`](./kalendari_pushimeve.json) me të gjitha datat zyrtare të përcaktuara nga Urdhri i Ministrisë së Arsimit:
+Ky mjet përdor kalendarin zyrtar `smip_docs/kalendari_pushimeve.json` me të gjitha datat zyrtare të përcaktuara nga Urdhri i Ministrisë së Arsimit:
 * **Pushimet e Dimrit:** 24 Dhjetor 2026 – 4 Janar 2027
 * **Pushimet e Pranverës:** 29 Mars 2027 – 2 Prill 2027
 * **Festa Kombëtare:** 28 Nëntor (Pavarësia), 29 Nëntor (Çlirimi), 8 Dhjetor (Dita e Rinisë), etj.

@@ -16,12 +16,22 @@ def find_workspace_root():
     cur = os.path.abspath(__file__)
     for _ in range(10):
         cur = os.path.dirname(cur)
-        if os.path.exists(os.path.join(cur, "kalendari_pushimeve.json")):
+        if os.path.exists(os.path.join(cur, "smip_docs")) or os.path.exists(os.path.join(cur, "kalendari_pushimeve.json")):
             return cur
     return os.getcwd()
 
 WORKSPACE_ROOT = find_workspace_root()
-DEFAULT_CALENDAR_PATH = os.path.join(WORKSPACE_ROOT, "kalendari_pushimeve.json")
+
+def get_calendar_path():
+    in_docs = os.path.join(WORKSPACE_ROOT, "smip_docs", "kalendari_pushimeve.json")
+    if os.path.exists(in_docs):
+        return in_docs
+    in_ref = os.path.join(WORKSPACE_ROOT, ".agents", "skills", "smip", "references", "kalendari_pushimeve.json")
+    if os.path.exists(in_ref):
+        return in_ref
+    return in_docs
+
+DEFAULT_CALENDAR_PATH = get_calendar_path()
 DEFAULT_SCHEDULE_PATH = os.path.join(WORKSPACE_ROOT, "orari_mesimor.json")
 
 WEEKDAYS_AL = {
