@@ -37,13 +37,13 @@
   <style>
     @keyframes cursorPulse {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.15); opacity: 0.85; }
+      50% { transform: scale(1.1); opacity: 0.9; }
     }
     .agent-cursor {
       animation: cursorPulse 2s infinite ease-in-out;
     }
     .fade-enter {
-      animation: fadeIn 0.3s ease-out forwards;
+      animation: fadeIn 0.25s ease-out forwards;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -110,12 +110,12 @@
 
     <!-- Visual Google Chrome Simulation Section (SMIP Portal Interface) -->
     <section id="chrome-demo" class="py-6 px-4 sm:px-6 max-w-7xl mx-auto">
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <h2 class="text-xl font-bold text-white flex items-center space-x-2">
             <span>Pamja Vizuale në Google Chrome (Demo Live)</span>
           </h2>
-          <p class="text-xs text-slate-400">Ndiqni veprimet e agjentit në ndërfaqen reale të regjistrit të SMIP me të dhëna model (Mock Data).</p>
+          <p class="text-xs text-slate-400">Ndiqni kursorin e agjentit duke klikuar butonat dhe hedhur temat në ndërfaqen reale të SMIP me mock data për lëndë të ndryshme.</p>
         </div>
 
         <!-- Controls -->
@@ -171,42 +171,74 @@
         </div>
 
         <!-- INSIDE CHROME: Actual SMIP Portal Interface -->
-        <div class="bg-white text-slate-800 p-4 sm:p-6 min-h-[520px] relative select-none overflow-hidden font-sans">
+        <div id="smip-viewport" class="bg-white text-slate-800 p-4 sm:p-6 min-h-[560px] relative select-none overflow-hidden font-sans">
           
-          <!-- Floating AI Agent Cursor & Tooltip Indicator -->
-          <div id="ai-cursor" class="absolute pointer-events-none transition-all duration-700 ease-in-out z-40 hidden" style="top: 130px; right: 220px;">
-            <div class="flex items-center space-x-2 bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-2xl border-2 border-white agent-cursor">
-              <span>🤖 Agjenti AI</span>
-              <span id="ai-action-badge" class="bg-blue-800 px-1.5 py-0.5 rounded text-[10px] font-mono">Duke vepruar...</span>
+          <!-- Floating AI Agent Cursor & Tooltip Indicator (Sharp Arrow Tip strictly at (0,0)) -->
+          <div id="ai-cursor" class="absolute pointer-events-none transition-all duration-700 ease-out z-50 opacity-0" style="top: 180px; left: 80px; will-change: top, left, transform;">
+            <div class="relative">
+              <!-- Pixel-precise OS Pointer Arrow with Tip at (0, 0) -->
+              <svg class="w-6 h-6 text-blue-600 block filter drop-shadow-xl select-none" viewBox="0 0 24 24" fill="currentColor" style="transform: translate(-1px, -1px);">
+                <path d="M0 0 L0 18 L4.5 13.5 L8.5 22 L11.5 20.5 L7.5 12 L13.5 12 Z" stroke="white" stroke-width="1.3" stroke-linejoin="round"/>
+              </svg>
+
+              <!-- Dynamic Action Tooltip Badge positioned neatly to the right of the cursor tip -->
+              <div class="absolute left-6 top-2 flex items-center space-x-1.5 bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-2xl border-2 border-white whitespace-nowrap agent-cursor pointer-events-none">
+                <span>🤖 Agjenti AI</span>
+                <span id="ai-action-badge" class="bg-blue-800 px-1.5 py-0.5 rounded text-[9px] font-mono">Gati...</span>
+              </div>
             </div>
-            <!-- Arrow Cursor Graphic -->
-            <svg class="w-6 h-6 text-blue-600 drop-shadow-md -mt-1 ml-2" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3 3l7 18 3-7 7-3L3 3z"/>
-            </svg>
           </div>
 
           <!-- SMIP Brand Header inside Portal -->
           <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-200">
             <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 rounded bg-red-700 text-white flex items-center justify-center font-bold text-xs">
+              <div class="w-8 h-8 rounded bg-red-700 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                 SMIP
               </div>
               <div>
-                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-tight">Portali i Mësuesit • Regjistri Shkollor</h3>
-                <p class="text-[11px] text-slate-500">Mësuesi: <strong class="text-slate-700">Zojë Vladi</strong> | Klasa në Kujdestari: <strong>Klasa 6 dhe 8</strong></p>
+                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-tight">Portali i Mësuesit • Regjistri Shkollor Parauniversitar</h3>
+                <p id="portal-teacher-line" class="text-[11px] text-slate-500">Mësuesi: <strong class="text-slate-700">Mësuesi Model (Llogari Demo)</strong> | Klasa: <strong>Klasa 6 – 8</strong></p>
               </div>
             </div>
             <div class="text-xs text-slate-500 flex items-center space-x-3">
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Llogari Aktive</span>
+              <span>Llogari Aktive (e-Albania)</span>
+            </div>
+          </div>
+
+          <!-- Multiple Subject Mock Switcher Tabs -->
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pb-2 border-b border-slate-100">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500 uppercase mr-1">Zgjidh Lëndën Mock:</span>
+              <button onclick="switchSubject('ed_fizik')" id="tab-sub-ed_fizik" class="px-2.5 py-1 rounded text-xs font-bold transition bg-blue-600 text-white shadow-sm flex items-center space-x-1">
+                <span>⚽</span><span>Edukim Fizik (Kl 6–8)</span>
+              </button>
+              <button onclick="switchSubject('anglisht')" id="tab-sub-anglisht" class="px-2.5 py-1 rounded text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 flex items-center space-x-1">
+                <span>🇬🇧</span><span>Anglisht Smiles 3 (Kl 3)</span>
+              </button>
+              <button onclick="switchSubject('matematike')" id="tab-sub-matematike" class="px-2.5 py-1 rounded text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 flex items-center space-x-1">
+                <span>📐</span><span>Matematikë (Kl 7)</span>
+              </button>
+              <button onclick="switchSubject('qytetari')" id="tab-sub-qytetari" class="px-2.5 py-1 rounded text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 flex items-center space-x-1">
+                <span>🏛️</span><span>Qytetari (Kl 8)</span>
+              </button>
+              <button onclick="switchSubject('tik')" id="tab-sub-tik" class="px-2.5 py-1 rounded text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 flex items-center space-x-1">
+                <span>💻</span><span>TIK / Teknologji (Kl 9)</span>
+              </button>
+            </div>
+            <div>
+              <button onclick="cycleNextSubject()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition flex items-center space-x-1">
+                <span>Lënda Tjetër</span>
+                <span>➜</span>
+              </button>
             </div>
           </div>
 
           <!-- SMIP Tabs Navigation -->
           <div class="flex items-center space-x-6 border-b border-slate-200 text-xs font-semibold text-slate-500 mt-2">
-            <div class="py-2.5 border-b-2 border-blue-600 text-blue-600 cursor-pointer">Regjistri i lëndës (Ditor)</div>
-            <div class="py-2.5 hover:text-slate-800 cursor-pointer">Regjistri i periudhës</div>
-            <div class="py-2.5 hover:text-slate-800 cursor-pointer">Vlerësimet vjetore</div>
+            <div class="py-2 border-b-2 border-blue-600 text-blue-600 cursor-pointer">Regjistri i lëndës (Ditor)</div>
+            <div class="py-2 hover:text-slate-800 cursor-pointer">Regjistri i periudhës</div>
+            <div class="py-2 hover:text-slate-800 cursor-pointer">Vlerësimet vjetore</div>
           </div>
 
           <!-- SMIP Filter Toolbar -->
@@ -230,7 +262,7 @@
               </div>
             </div>
 
-            <!-- Action Buttons in SMIP -->
+            <!-- Action Buttons in SMIP (Targets for Agent Cursor) -->
             <div class="flex items-center space-x-2">
               <button id="smip-btn-add" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded flex items-center space-x-1 shadow transition">
                 <span>+</span>
@@ -247,119 +279,12 @@
           <div class="mt-4 border border-slate-200 rounded-lg overflow-x-auto shadow-sm">
             <table class="w-full text-xs text-left text-slate-700 border-collapse">
               <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
-                <tr>
-                  <th class="p-2 border-r border-slate-200 w-8 text-center">Nr</th>
-                  <th class="p-2 border-r border-slate-200 w-44">Nxënësi (Mock Data)</th>
-                  <!-- Date Column Headers with Mock Lesson Tooltips -->
-                  <th id="col-02" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>02.10</div>
-                    <div id="badge-02" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-05" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>05.10</div>
-                    <div id="badge-05" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-09" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>09.10</div>
-                    <div id="badge-09" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-12" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>12.10</div>
-                    <div id="badge-12" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-16" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>16.10</div>
-                    <div id="badge-16" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-19" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>19.10</div>
-                    <div id="badge-19" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-23" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>23.10</div>
-                    <div id="badge-23" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-26" class="p-2 border-r border-slate-200 text-center w-20 transition">
-                    <div>26.10</div>
-                    <div id="badge-26" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
-                  <th id="col-30" class="p-2 text-center w-20 transition">
-                    <div>30.10</div>
-                    <div id="badge-30" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
-                  </th>
+                <tr id="table-headers-row">
+                  <!-- Injected via JavaScript -->
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-200 text-center font-mono">
-                <!-- Mock Student 1 -->
-                <tr class="hover:bg-blue-50/60">
-                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">1</td>
-                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Arbër Hoxha</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 font-bold text-emerald-600">10</td>
-                </tr>
-                <!-- Mock Student 2 -->
-                <tr class="hover:bg-blue-50/60">
-                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">2</td>
-                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Bora Kelmendi</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 font-bold text-emerald-600">10</td>
-                </tr>
-                <!-- Mock Student 3 -->
-                <tr class="hover:bg-blue-50/60">
-                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">3</td>
-                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Drin Zeka</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 font-bold text-blue-600">8</td>
-                </tr>
-                <!-- Mock Student 4 -->
-                <tr class="hover:bg-blue-50/60">
-                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">4</td>
-                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Elira Berisha</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
-                  <td class="p-2 font-bold text-emerald-600">9</td>
-                </tr>
-                <!-- Mock Student 5 -->
-                <tr class="hover:bg-blue-50/60">
-                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">5</td>
-                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Jon Dervishi</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
-                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
-                  <td class="p-2 font-bold text-blue-600">8</td>
-                </tr>
+              <tbody id="table-body" class="divide-y divide-slate-200 text-center font-mono">
+                <!-- Injected via JavaScript -->
               </tbody>
             </table>
           </div>
@@ -387,7 +312,7 @@
               </div>
               <div class="pt-3 border-t border-slate-200 flex justify-end space-x-2">
                 <button class="px-3 py-1.5 rounded border border-slate-300 text-xs text-slate-600">Anulo</button>
-                <button id="modal-btn-confirm" class="px-4 py-1.5 rounded bg-blue-600 text-white font-bold text-xs shadow">Konfirmo</button>
+                <button id="modal-btn-confirm" class="px-4 py-1.5 rounded bg-blue-600 text-white font-bold text-xs shadow transition">Konfirmo</button>
               </div>
             </div>
           </div>
@@ -493,41 +418,220 @@
     <p>Ndërtuar me ❤️ për arsimin parauniversitar në Shqipëri nga <a href="https://github.com/adalenv" class="text-slate-300 hover:text-white underline font-medium">Adalenv</a>. Licenca MIT.</p>
   </footer>
 
-  <!-- Visual Interactive Chrome Simulation Logic -->
+  <!-- Visual Interactive Chrome Simulation Logic with Exact Element Bounding Calculation -->
   <script>
-    const mockTopicsQueue = [
-      {
-        colId: "col-02",
-        badgeId: "badge-02",
-        date: "02.10.2026",
-        tema: "Gjimnastikë: Kapërcimi i Kaluçit",
-        situata: "Fazat e amortizimit dhe mbështetjes së krahëve"
+    const subjectsData = {
+      "ed_fizik": {
+        className: "Klasa 6 – 8",
+        subjectName: "Edukim Fizik",
+        teacherLine: "Mësuesi: <strong class=\"text-slate-700\">Mësuesi Model (Edukim Fizik)</strong> | Klasa: <strong>Klasa 6 – 8</strong>",
+        month: "10/2026",
+        topics: [
+          { date: "02.10", fullDate: "02.10.2026", tema: "Gjimnastikë: Kapërcimi i Kaluçit", situata: "Fazat e amortizimit dhe mbështetjes së krahëve" },
+          { date: "05.10", fullDate: "05.10.2026", tema: "Matjet Antropometrike (Ora 1)", situata: "Matje të perimetrave dhe peshës trupore" },
+          { date: "09.10", fullDate: "09.10.2026", tema: "Hendboll: Pasimi me një dorë", situata: "Teknika e pasimit të shpejtë në dyshe" },
+          { date: "12.10", fullDate: "12.10.2026", tema: "Edukim shëndetësor: Postura trupore", situata: "Përmirësimi i qëndrimit dhe shmangia e lodhjes" },
+          { date: "16.10", fullDate: "16.10.2026", tema: "Lojë popullore: Lufta e gjelave", situata: "Zhvillimi i ekuilibrit dhe rezistencës" },
+          { date: "19.10", fullDate: "19.10.2026", tema: "Gjimnastikë ritmike: Ushtrime me litar", situata: "Koordinim i lëvizjeve të këmbëve me litarin" },
+          { date: "23.10", fullDate: "23.10.2026", tema: "Basketboll: Pasimi nga gjoksi", situata: "Zbatimi i teknikës së pasimit të shpejtë" },
+          { date: "26.10", fullDate: "26.10.2026", tema: "Basketboll: Driblimi i lartë dhe i ulët", situata: "Veprime të koordinuara sulm-mbrojtje" },
+          { date: "30.10", fullDate: "30.10.2026", tema: "Përsëritje: Lojëra sportive me rregulla", situata: "Fair-Play dhe respektimi i kundërshtarit" }
+        ],
+        students: [
+          { name: "Arbër Hoxha", grades: ["10", "9", "8", "10", "M", "9", "10", "8", "10"] },
+          { name: "Bora Kelmendi", grades: ["9", "10", "10", "8", "9", "10", "9", "10", "10"] },
+          { name: "Drin Zeka", grades: ["8", "7", "9", "M", "8", "8", "7", "9", "8"] },
+          { name: "Elira Berisha", grades: ["10", "10", "9", "10", "10", "9", "10", "10", "9"] },
+          { name: "Jon Dervishi", grades: ["7", "8", "M", "8", "7", "8", "8", "7", "8"] }
+        ]
       },
-      {
-        colId: "col-05",
-        badgeId: "badge-05",
-        date: "05.10.2026",
-        tema: "Matjet Antropometrike (Ora 1)",
-        situata: "Matje të perimetrave dhe peshës trupore"
+      "anglisht": {
+        className: "Klasa 3",
+        subjectName: "Gjuhë Angleze (Smiles 3)",
+        teacherLine: "Mësuesi: <strong class=\"text-slate-700\">Mësuesi Model (Gjuhë Angleze)</strong> | Klasa: <strong>Klasa 3</strong>",
+        month: "10/2026",
+        topics: [
+          { date: "02.10", fullDate: "02.10.2026", tema: "Module 1: In the classroom", situata: "Ask and answer about school objects" },
+          { date: "07.10", fullDate: "07.10.2026", tema: "Colours and Shapes (Vocabulary)", situata: "Identify shapes and colours around us" },
+          { date: "09.10", fullDate: "09.10.2026", tema: "Grammar: Plural nouns (-s)", situata: "Singular and plural pairs with flashcards" },
+          { date: "14.10", fullDate: "14.10.2026", tema: "Module 2: My lovely toys", situata: "Describe your favourite toy" },
+          { date: "16.10", fullDate: "16.10.2026", tema: "Grammar: Have got / Has got", situata: "Pair interview: Have you got a robot?" },
+          { date: "21.10", fullDate: "21.10.2026", tema: "Story time: Woody the Toy", situata: "Reading comprehension and role-play" },
+          { date: "23.10", fullDate: "23.10.2026", tema: "Numbers 20 to 50 (Math in English)", situata: "Count and jump games in class" },
+          { date: "28.10", fullDate: "28.10.2026", tema: "Writing: Describe my room", situata: "Write 4 simple sentences with prepositions" },
+          { date: "30.10", fullDate: "30.10.2026", tema: "First Term Project: My toy poster", situata: "Creative presentation in front of the class" }
+        ],
+        students: [
+          { name: "Dea Prifti", grades: ["10", "10", "9", "10", "10", "10", "9", "10", "10"] },
+          { name: "Kledi Murati", grades: ["8", "8", "7", "M", "8", "9", "8", "8", "9"] },
+          { name: "Rozafa Shala", grades: ["9", "10", "10", "9", "10", "9", "10", "10", "10"] },
+          { name: "Gentian Kola", grades: ["7", "7", "8", "8", "M", "7", "8", "7", "8"] },
+          { name: "Melisa Sinani", grades: ["10", "9", "10", "10", "9", "10", "10", "9", "10"] }
+        ]
       },
-      {
-        colId: "col-09",
-        badgeId: "badge-09",
-        date: "09.10.2026",
-        tema: "Hendboll: Pasimi me një dorë",
-        situata: "Teknika e pasimit të shpejtë në dyshe"
+      "matematike": {
+        className: "Klasa 7",
+        subjectName: "Matematikë (Albas / Pegi)",
+        teacherLine: "Mësuesi: <strong class=\"text-slate-700\">Mësuesi Model (Matematikë)</strong> | Klasa: <strong>Klasa 7</strong>",
+        month: "10/2026",
+        topics: [
+          { date: "02.10", fullDate: "02.10.2026", tema: "Numrat e plotë dhe boshti numerik", situata: "Krahasimi i temperaturave dhe thellësive" },
+          { date: "05.10", fullDate: "05.10.2026", tema: "Mbledhja dhe zbritja e numrave me shenjë", situata: "Llogaritje të bilancit financiar të thjeshtë" },
+          { date: "08.10", fullDate: "08.10.2026", tema: "Shumëzimi dhe pjesëtimi i numrave të plotë", situata: "Zbatimi i rregullit të shenjave" },
+          { date: "12.10", fullDate: "12.10.2026", tema: "Thyesat e rregullta dhe të parregullta", situata: "Ndarja e pjesëve të një sipërfaqeje" },
+          { date: "15.10", fullDate: "15.10.2026", tema: "Veprimet me thyesa: Emëruesi i përbashkët", situata: "Problema praktike me matje recetash" },
+          { date: "19.10", fullDate: "19.10.2026", tema: "Numrat dhjetorë dhe rrumbullakimi", situata: "Llogaritja e çmimeve në treg" },
+          { date: "22.10", fullDate: "22.10.2026", tema: "Gjeometri: Këndet plotësues dhe suplementarë", situata: "Matja e këndeve me raportor" },
+          { date: "26.10", fullDate: "26.10.2026", tema: "Drejtëzat paralele dhe prerëset", situata: "Shembuj të vijave paralele në arkitekturë" },
+          { date: "30.10", fullDate: "30.10.2026", tema: "Përsëritje për testin e periudhës I", situata: "Zgjidhje problemash të kombinuara" }
+        ],
+        students: [
+          { name: "Alen Rama", grades: ["9", "10", "9", "10", "10", "9", "10", "10", "9"] },
+          { name: "Dua Lika", grades: ["10", "10", "10", "10", "9", "10", "10", "10", "10"] },
+          { name: "Endri Spahiu", grades: ["7", "8", "7", "M", "8", "7", "8", "8", "7"] },
+          { name: "Jona Basha", grades: ["8", "9", "8", "9", "9", "8", "9", "8", "9"] },
+          { name: "Ledion Ceka", grades: ["6", "7", "M", "7", "6", "7", "7", "8", "7"] }
+        ]
       },
-      {
-        colId: "col-12",
-        badgeId: "badge-12",
-        date: "12.10.2026",
-        tema: "Edukim shëndetësor: Postura trupore",
-        situata: "Përmirësimi i qëndrimit dhe shmangia e lodhjes"
+      "qytetari": {
+        className: "Klasa 8",
+        subjectName: "Qytetari (Mediaprint)",
+        teacherLine: "Mësuesi: <strong class=\"text-slate-700\">Mësuesi Model (Qytetari)</strong> | Klasa: <strong>Klasa 8</strong>",
+        month: "10/2026",
+        topics: [
+          { date: "02.10", fullDate: "02.10.2026", tema: "Individi, grupi dhe shoqëria civile", situata: "Roli i individit në vendimmarrje lokale" },
+          { date: "06.10", fullDate: "06.10.2026", tema: "Të drejtat dhe detyrimet qytetare", situata: "Analizë e Kartës së të Drejtave të Njeriut" },
+          { date: "09.10", fullDate: "09.10.2026", tema: "Rregullat dhe ligjet në komunitet", situata: "Pse nevojiten ligjet për bashkëjetesë?" },
+          { date: "13.10", fullDate: "13.10.2026", tema: "Institucionet e qeverisjes demokratike", situata: "Ndarja e pushteteve: Legjislativ, Ekzekutiv, Gjyqësor" },
+          { date: "16.10", fullDate: "16.10.2026", tema: "Zgjedhjet dhe e drejta e votës", situata: "Simulim i një procesi zgjedhor në klasë" },
+          { date: "20.10", fullDate: "20.10.2026", tema: "Mbrojtja e mjedisit dhe qytetaria aktive", situata: "Debat mbi riciklimin e mbetjeve urbane" },
+          { date: "23.10", fullDate: "23.10.2026", tema: "Vullnetarizmi dhe ndihma për komunitetin", situata: "Krijimi i një plani vullnetar për shkollën" },
+          { date: "27.10", fullDate: "27.10.2026", tema: "Konsumatori dhe të drejtat e tij", situata: "Si të dallojmë produktet e sigurta" },
+          { date: "30.10", fullDate: "30.10.2026", tema: "Projekt: 'Komuniteti ynë i qëndrueshëm'", situata: "Prezantim i projekteve në grupe" }
+        ],
+        students: [
+          { name: "Alesia Duka", grades: ["10", "10", "10", "9", "10", "10", "9", "10", "10"] },
+          { name: "Besnik Halili", grades: ["8", "9", "8", "8", "M", "9", "8", "8", "9"] },
+          { name: "Erisa Shehu", grades: ["10", "9", "10", "10", "10", "10", "10", "9", "10"] },
+          { name: "Luan Gjoni", grades: ["7", "8", "7", "8", "8", "7", "M", "8", "8"] },
+          { name: "Sibora Tola", grades: ["9", "10", "9", "10", "9", "10", "9", "10", "10"] }
+        ]
+      },
+      "tik": {
+        className: "Klasa 9",
+        subjectName: "TIK / Teknologji (Irisoft)",
+        teacherLine: "Mësuesi: <strong class=\"text-slate-700\">Mësuesi Model (TIK & Teknologji)</strong> | Klasa: <strong>Klasa 9</strong>",
+        month: "10/2026",
+        topics: [
+          { date: "01.10", fullDate: "01.10.2026", tema: "Struktura e të dhënave dhe algoritmet", situata: "Skicimi i një bllokskeme për gjetjen e maksimumit" },
+          { date: "06.10", fullDate: "06.10.2026", tema: "Programimi në Python: Variablat dhe tipet", situata: "Shkrimi i një skripti të thjeshtë llogaritës" },
+          { date: "08.10", fullDate: "08.10.2026", tema: "Strukturat e kushtëzuara (if / else)", situata: "Krijimi i një loje me zgjedhje të shumëfishta" },
+          { date: "13.10", fullDate: "13.10.2026", tema: "Ciklet në Python (for dhe while)", situata: "Gjenerimi automatik i tabelave numerike" },
+          { date: "15.10", fullDate: "15.10.2026", tema: "Funksionet dhe ripërdorimi i kodit", situata: "Ndërtimi i funksioneve modulare matematike" },
+          { date: "20.10", fullDate: "20.10.2026", tema: "Siguria kibernetike dhe mbrojtja e të dhënave", situata: "Analizimi i rreziqeve nga phishing dhe malware" },
+          { date: "22.10", fullDate: "22.10.2026", tema: "Rrjetet kompjuterike dhe protokollet (TCP/IP)", situata: "Si udhëton një paketë informacioni në internet" },
+          { date: "27.10", fullDate: "27.10.2026", tema: "Baza e të dhënave relacionale (Hyrje)", situata: "Modelimi i një tabele për bibliotekën e shkollës" },
+          { date: "29.10", fullDate: "29.10.2026", tema: "Projekt: 'Aplikacioni im i parë në Python'", situata: "Prezantimi i projektit individual në kompjuter" }
+        ],
+        students: [
+          { name: "Ardit Krasniqi", grades: ["10", "10", "9", "10", "10", "10", "10", "10", "10"] },
+          { name: "Borana Visha", grades: ["10", "9", "10", "10", "10", "9", "10", "10", "10"] },
+          { name: "Erion Hoxha", grades: ["8", "8", "7", "M", "8", "8", "9", "8", "8"] },
+          { name: "Keisi Zeneli", grades: ["9", "10", "9", "9", "10", "10", "9", "10", "10"] },
+          { name: "Noel Balla", grades: ["7", "7", "8", "7", "8", "7", "7", "M", "8"] }
+        ]
       }
-    ];
+    };
 
+    const subjectKeysList = ["ed_fizik", "anglisht", "matematike", "qytetari", "tik"];
+    let currentSubjectKey = "ed_fizik";
     let demoTimeoutIds = [];
     let isRunning = false;
+
+    function cycleNextSubject() {
+      const currIdx = subjectKeysList.indexOf(currentSubjectKey);
+      const nextIdx = (currIdx + 1) % subjectKeysList.length;
+      switchSubject(subjectKeysList[nextIdx]);
+    }
+
+    function renderSubjectTable(key) {
+      const sub = subjectsData[key];
+      if (!sub) return;
+
+      const teacherLine = document.getElementById("portal-teacher-line");
+      if (teacherLine && sub.teacherLine) {
+        teacherLine.innerHTML = sub.teacherLine;
+      }
+
+      document.getElementById("filter-class").innerText = sub.className;
+      document.getElementById("filter-subject").innerText = sub.subjectName;
+      document.getElementById("filter-month").innerText = sub.month;
+
+      // Render Table Headers
+      const trHeader = document.getElementById("table-headers-row");
+      trHeader.innerHTML = `
+        <th class="p-2 border-r border-slate-200 w-8 text-center">Nr</th>
+        <th class="p-2 border-r border-slate-200 w-44">Nxënësi (Mock Data)</th>
+      `;
+
+      sub.topics.forEach((t, i) => {
+        const isLast = i === sub.topics.length - 1;
+        const th = document.createElement("th");
+        th.id = `col-topic-${i}`;
+        th.className = `p-2 ${isLast ? '' : 'border-r'} border-slate-200 text-center w-20 transition-colors duration-300`;
+        th.innerHTML = `
+          <div>${t.date}</div>
+          <div id="badge-topic-${i}" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+        `;
+        trHeader.appendChild(th);
+      });
+
+      // Render Table Body Rows
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = "";
+
+      sub.students.forEach((st, sIdx) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-blue-50/60";
+
+        let gradesHtml = "";
+        st.grades.forEach((g, gIdx) => {
+          const isLast = gIdx === st.grades.length - 1;
+          let colorClass = "text-emerald-600";
+          if (g === "M") colorClass = "text-rose-600 font-extrabold";
+          else if (parseInt(g) < 9) colorClass = "text-blue-600";
+
+          gradesHtml += `<td class="p-2 ${isLast ? '' : 'border-r'} border-slate-200 font-bold ${colorClass}">${g}</td>`;
+        });
+
+        tr.innerHTML = `
+          <td class="p-2 border-r border-slate-200 font-bold text-slate-500">${sIdx + 1}</td>
+          <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">${st.name}</td>
+          ${gradesHtml}
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function switchSubject(key) {
+      if (isRunning) resetVisualDemo();
+      currentSubjectKey = key;
+
+      subjectKeysList.forEach(k => {
+        const btn = document.getElementById(`tab-sub-${k}`);
+        if (!btn) return;
+        if (k === key) {
+          btn.className = "px-2.5 py-1 rounded text-xs font-bold transition bg-blue-600 text-white shadow-sm flex items-center space-x-1";
+        } else {
+          btn.className = "px-2.5 py-1 rounded text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 flex items-center space-x-1";
+        }
+      });
+
+      renderSubjectTable(key);
+      setTimeout(() => {
+        startVisualDemo();
+      }, 300);
+    }
 
     function clearTimeouts() {
       demoTimeoutIds.forEach(id => clearTimeout(id));
@@ -538,41 +642,67 @@
       clearTimeouts();
       isRunning = false;
 
-      // Reset badges
-      ["02", "05", "09", "12", "16", "19", "23", "26", "30"].forEach(id => {
-        const col = document.getElementById(`col-${id}`);
-        const badge = document.getElementById(`badge-${id}`);
-        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 transition";
-        if (badge) {
-          badge.innerText = "Pa temë";
-          badge.className = "text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto";
-        }
-      });
+      renderSubjectTable(currentSubjectKey);
 
-      // Reset modal and cursor
       const modal = document.getElementById("smip-modal");
       const cursor = document.getElementById("ai-cursor");
       const toast = document.getElementById("smip-toast");
+      const saveBtn = document.getElementById("smip-btn-save");
       const saveBtnText = document.getElementById("save-btn-text");
 
       if (modal) modal.classList.add("hidden");
-      if (cursor) cursor.classList.add("hidden");
+      if (cursor) {
+        cursor.style.opacity = "0";
+        cursor.style.top = "180px";
+        cursor.style.left = "80px";
+      }
       if (toast) toast.classList.add("hidden");
+      if (saveBtn) {
+        saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded flex items-center space-x-1 shadow transition";
+      }
       if (saveBtnText) saveBtnText.innerText = "Ruaj Ndryshimet";
 
       const playText = document.getElementById("play-btn-text");
       if (playText) playText.innerText = "Nis Demonstrimin e Agjentit";
     }
 
-    function moveCursor(x, y, actionText, delay) {
+    // Exact dynamic element position calculation relative to viewport
+    function moveCursorToTarget(targetElementId, actionText, delay, onReachedCallback) {
       const id = setTimeout(() => {
+        const target = document.getElementById(targetElementId);
+        const viewport = document.getElementById("smip-viewport");
         const cursor = document.getElementById("ai-cursor");
         const actionBadge = document.getElementById("ai-action-badge");
-        if (!cursor) return;
-        cursor.classList.remove("hidden");
-        cursor.style.top = `${y}px`;
-        cursor.style.left = `${x}px`;
+        if (!target || !viewport || !cursor) return;
+
+        const tRect = target.getBoundingClientRect();
+        const vRect = viewport.getBoundingClientRect();
+
+        // Arrow pointer tip is exactly at (0, 0) of #ai-cursor container.
+        // We target precisely 24px from left edge and the vertical center of the element:
+        const targetX = Math.round(tRect.left - vRect.left + (viewport.scrollLeft || 0) + Math.min(24, tRect.width / 2));
+        const targetY = Math.round(tRect.top - vRect.top + (viewport.scrollTop || 0) + (tRect.height / 2));
+
+        cursor.style.opacity = "1";
+        cursor.style.top = `${targetY}px`;
+        cursor.style.left = `${targetX}px`;
         if (actionBadge && actionText) actionBadge.innerText = actionText;
+
+        // Button press visual animation on arrival (after the 700ms smooth movement)
+        setTimeout(() => {
+          // Cursor realistic click dip
+          cursor.classList.add("scale-90");
+          setTimeout(() => cursor.classList.remove("scale-90"), 180);
+
+          // Target button press and blue glow ring
+          target.classList.add("ring-4", "ring-blue-400", "scale-95");
+          setTimeout(() => {
+            target.classList.remove("ring-4", "ring-blue-400", "scale-95");
+          }, 320);
+
+          if (onReachedCallback) onReachedCallback();
+        }, 700);
+
       }, delay);
       demoTimeoutIds.push(id);
     }
@@ -589,7 +719,7 @@
           } else {
             clearInterval(interval);
           }
-        }, 25);
+        }, 20);
       }, delay);
       demoTimeoutIds.push(id);
     }
@@ -602,12 +732,15 @@
       const playText = document.getElementById("play-btn-text");
       if (playText) playText.innerText = "Agjenti po vepron...";
 
-      let timeline = 200;
+      const currentSub = subjectsData[currentSubjectKey];
+      const topics = currentSub.topics;
 
-      // 1. Move cursor to "+ Shto temë"
-      moveCursor(680, 115, "Klikon '+ Shto temë'", timeline);
+      let timeline = 100;
 
-      timeline += 800;
+      // 1. Move cursor directly to "+ Shto temë" button
+      moveCursorToTarget("smip-btn-add", "Klikon '+ Shto temë'", timeline);
+
+      timeline += 950;
       // 2. Open Modal for Topic 1
       const idModalOpen1 = setTimeout(() => {
         const modal = document.getElementById("smip-modal");
@@ -615,25 +748,24 @@
       }, timeline);
       demoTimeoutIds.push(idModalOpen1);
 
-      // Type data, tema, situata in modal
-      const t1 = mockTopicsQueue[0];
-      typeInField("modal-input-date", t1.date, timeline + 200);
-      typeInField("modal-input-name", t1.tema, timeline + 500);
-      typeInField("modal-input-situata", t1.situata, timeline + 800);
+      const t1 = topics[0];
+      typeInField("modal-input-date", t1.fullDate, timeline + 150);
+      typeInField("modal-input-name", t1.tema, timeline + 450);
+      typeInField("modal-input-situata", t1.situata, timeline + 850);
 
-      timeline += 1600;
-      // Move cursor to "Konfirmo" button
-      moveCursor(580, 340, "Konfirmon në modal", timeline);
+      timeline += 1700;
+      // 3. Move cursor directly to "Konfirmo" button in the open modal
+      moveCursorToTarget("modal-btn-confirm", "Konfirmon temën 1", timeline);
 
-      timeline += 600;
-      // Close modal and highlight table column
+      timeline += 850;
+      // Close modal and illuminate column 0
       const idModalClose1 = setTimeout(() => {
         const modal = document.getElementById("smip-modal");
         if (modal) modal.classList.add("hidden");
 
-        const col = document.getElementById(t1.colId);
-        const badge = document.getElementById(t1.badgeId);
-        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+        const col = document.getElementById("col-topic-0");
+        const badge = document.getElementById("badge-topic-0");
+        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition-colors duration-300";
         if (badge) {
           badge.innerText = "✓ " + t1.tema;
           badge.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
@@ -641,43 +773,44 @@
       }, timeline);
       demoTimeoutIds.push(idModalClose1);
 
-      timeline += 600;
-      // 3. Move cursor back to "+ Shto temë" for Topic 2
-      moveCursor(680, 115, "Shton temën 2...", timeline);
+      timeline += 650;
+      // 4. Move cursor back to "+ Shto temë" button for Topic 2
+      moveCursorToTarget("smip-btn-add", "Shton temën 2...", timeline);
 
-      timeline += 700;
+      timeline += 950;
       const idModalOpen2 = setTimeout(() => {
         const modal = document.getElementById("smip-modal");
         if (modal) modal.classList.remove("hidden");
       }, timeline);
       demoTimeoutIds.push(idModalOpen2);
 
-      const t2 = mockTopicsQueue[1];
-      typeInField("modal-input-date", t2.date, timeline + 200);
-      typeInField("modal-input-name", t2.tema, timeline + 500);
-      typeInField("modal-input-situata", t2.situata, timeline + 800);
+      const t2 = topics[1];
+      typeInField("modal-input-date", t2.fullDate, timeline + 150);
+      typeInField("modal-input-name", t2.tema, timeline + 450);
+      typeInField("modal-input-situata", t2.situata, timeline + 850);
 
-      timeline += 1500;
-      moveCursor(580, 340, "Konfirmon temën 2", timeline);
+      timeline += 1700;
+      moveCursorToTarget("modal-btn-confirm", "Konfirmon temën 2", timeline);
 
-      timeline += 600;
+      timeline += 850;
       const idModalClose2 = setTimeout(() => {
         const modal = document.getElementById("smip-modal");
         if (modal) modal.classList.add("hidden");
 
-        const col = document.getElementById(t2.colId);
-        const badge = document.getElementById(t2.badgeId);
-        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+        const col = document.getElementById("col-topic-1");
+        const badge = document.getElementById("badge-topic-1");
+        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition-colors duration-300";
         if (badge) {
           badge.innerText = "✓ " + t2.tema;
           badge.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
         }
 
-        // Fast populate remaining mock dates to demonstrate batch speed
-        mockTopicsQueue.slice(2).forEach(item => {
-          const c = document.getElementById(item.colId);
-          const b = document.getElementById(item.badgeId);
-          if (c) c.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+        // Fast populate remaining dates to showcase autonomous batch completion
+        topics.slice(2).forEach((item, idx) => {
+          const colIdx = idx + 2;
+          const c = document.getElementById(`col-topic-${colIdx}`);
+          const b = document.getElementById(`badge-topic-${colIdx}`);
+          if (c) c.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition-colors duration-300";
           if (b) {
             b.innerText = "✓ " + item.tema;
             b.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
@@ -686,19 +819,22 @@
       }, timeline);
       demoTimeoutIds.push(idModalClose2);
 
-      timeline += 800;
-      // 4. Move cursor to "Ruaj Ndryshimet" button
-      moveCursor(780, 115, "Klikon 'Ruaj Ndryshimet'", timeline);
+      timeline += 850;
+      // 5. Move cursor directly to "Ruaj Ndryshimet" button
+      moveCursorToTarget("smip-btn-save", "Klikon 'Ruaj Ndryshimet'", timeline);
 
-      timeline += 600;
+      timeline += 850;
       const idSaveFinal = setTimeout(() => {
         const saveBtn = document.getElementById("smip-btn-save");
         const saveBtnText = document.getElementById("save-btn-text");
         const toast = document.getElementById("smip-toast");
 
-        if (saveBtn) saveBtn.className = "bg-emerald-800 text-white font-bold px-3.5 py-1.5 rounded flex items-center space-x-1 shadow transition";
+        if (saveBtn) saveBtn.className = "bg-emerald-800 text-white font-bold px-3.5 py-1.5 rounded flex items-center space-x-1 shadow transition ring-4 ring-emerald-300";
         if (saveBtnText) saveBtnText.innerText = "✓ U ruajtën!";
-        if (toast) toast.classList.remove("hidden");
+        if (toast) {
+          document.getElementById("toast-message").innerText = `✓ Sukses: Temat e lëndës '${currentSub.subjectName}' u ruajtën në SMIP!`;
+          toast.classList.remove("hidden");
+        }
 
         const playText = document.getElementById("play-btn-text");
         if (playText) playText.innerText = "✓ Përfundoi me Sukses!";
@@ -709,9 +845,10 @@
 
     // Auto-trigger on viewport enter or window load
     window.addEventListener("DOMContentLoaded", () => {
+      renderSubjectTable("ed_fizik");
       setTimeout(() => {
         startVisualDemo();
-      }, 1200);
+      }, 1000);
     });
   </script>
 </body>
