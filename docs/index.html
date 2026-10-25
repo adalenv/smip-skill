@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMIP Skill - AI Agent Assistant për Portalet e Mësuesve (smip.al)</title>
-  <meta name="description" content="Skill dhe mjet automatizimi për regjistrin mësimor të SMIP (smip.al). Analizon planet Word/PDF, llogarit oraret me kalendarin zyrtar të pushimeve dhe inseron temat automatikisht.">
+  <title>SMIP Skill - Agjenti Inteligjent AI për Regjistrin Shkollor (smip.al)</title>
+  <meta name="description" content="Automatizimi i plotë i portalit zyrtar SMIP për mësuesit. Lidhet me Google Chrome dhe të gjithë agjentët AI për të gjetur planet mësimore dhe hedhur temat në regjistër autonomisht.">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,17 +19,15 @@
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            primary: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-            },
-            dark: {
-              800: '#131b26',
-              900: '#0c1017',
-              950: '#06090e',
+            smip: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#1d4ed8',
+              800: '#1e3a8a',
+              900: '#0f172a',
+              950: '#090d16',
             }
           }
         }
@@ -37,235 +35,453 @@
     }
   </script>
   <style>
-    .glow {
-      box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25);
+    @keyframes cursorPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.85; }
+    }
+    .agent-cursor {
+      animation: cursorPulse 2s infinite ease-in-out;
+    }
+    .fade-enter {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
-<body class="bg-dark-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-black min-h-screen flex flex-col">
+<body class="bg-smip-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col">
 
-  <!-- Nav Header -->
-  <header class="border-b border-slate-800/80 bg-dark-900/60 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-bold text-black shadow-lg shadow-emerald-500/20">
-          S
+  <!-- SMIP Official-Styled Header -->
+  <header class="border-b border-slate-800 bg-[#0b1320]/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3.5">
+        <!-- Albanian Eagle / SMIP Shield Badge -->
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-700 via-rose-800 to-slate-900 border border-red-500/30 flex items-center justify-center shadow-md">
+          <span class="text-white font-extrabold text-xs tracking-wider">MAS</span>
         </div>
         <div>
-          <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">SMIP Skill</span>
-          <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v1.0</span>
+          <div class="flex items-center space-x-2">
+            <span class="font-extrabold text-base tracking-tight text-white">SMIP AGENT</span>
+            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">AI SKILL</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Sistemi i Menaxhimit të Informacionit Parauniversitar (smip.al)</p>
         </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <a href="#simulator" class="text-sm font-medium text-slate-300 hover:text-white transition">Simulatori i Agjentit</a>
-        <a href="#features" class="text-sm font-medium text-slate-300 hover:text-white transition">Veçoritë</a>
-        <a href="#install" class="text-sm font-medium text-slate-300 hover:text-white transition">Instalimi</a>
-        <a href="https://github.com/adalenv/smip-skill" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-medium border border-slate-700 transition">
+
+      <div class="flex items-center space-x-5 text-sm font-medium">
+        <a href="#chrome-demo" class="text-slate-300 hover:text-white transition">Pamja në Chrome</a>
+        <a href="#self-healing" class="text-slate-300 hover:text-white transition">Vetë-Riparimi Dinamik</a>
+        <a href="#agents" class="text-slate-300 hover:text-white transition">Agjentët e Mbështetur</a>
+        <a href="https://github.com/adalenv/smip-skill" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-lg shadow-blue-600/20">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          <span>GitHub</span>
+          <span>GitHub Repo</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
   <main class="flex-1">
-    <section class="relative pt-16 pb-20 overflow-hidden text-center">
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-transparent to-transparent pointer-events-none"></div>
-      
+    <!-- Hero Section -->
+    <section class="relative pt-12 pb-14 text-center overflow-hidden">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-6">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Përputhje 100% me Kurrikulën MAS & ASCAP</span>
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-5">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+          <span>Integrim Nativ me Google Chrome & Agjentët AI</span>
         </div>
 
-        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-          Automatizoni Regjistrin Mësimor të <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">SMIP</span> me Agjentët AI
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
+          Hedhja Autonome e Temave në <span class="bg-gradient-to-r from-blue-400 via-sky-300 to-teal-300 bg-clip-text text-transparent">SMIP.AL</span>
         </h1>
 
-        <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
-          Pyet mësuesin për klasën dhe botuesin, gjen e shkarkon planet mësimore (Word/PDF), llogarit orarin me kalendarin zyrtar të pushimeve dhe i inseron temat në <span class="font-semibold text-white">smip.al</span> me 1 klikim.
+        <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+          Agjenti lidhet direkt me Google Chrome-in tuaj ekzistues (CDP), gjen planin mësimor, llogarit pushimet zyrtare të MAS dhe plotëson regjistrin ditor të shkollës në sekonda.
         </p>
 
-        <div class="flex flex-wrap items-center justify-center gap-4">
-          <a href="#simulator" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold shadow-lg shadow-emerald-500/25 transition">
-            Shiko Agjentin në Veprim
-          </a>
-          <a href="https://github.com/adalenv/smip-skill" target="_blank" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold border border-slate-700 transition">
-            Dokumentacioni në GitHub
-          </a>
-        </div>
-
-        <!-- Badges -->
-        <div class="mt-10 flex flex-wrap justify-center gap-2 text-xs text-slate-400">
-          <span class="px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60">⚡ Antigravity Skill</span>
-          <span class="px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60">🤖 Claude Code Plugin</span>
-          <span class="px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60">🎯 Cursor Rules</span>
-          <span class="px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60">🛡️ 24h Portal Safety</span>
+        <!-- Dynamic Self-Healing Callout -->
+        <div class="inline-flex flex-wrap items-center justify-center gap-2 text-xs bg-slate-900/90 border border-slate-800 p-2 rounded-xl text-slate-300">
+          <span class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">✓ 100% Dinamik</span>
+          <span class="text-slate-400">• Gjen vetë zgjidhjen nëse ndryshojnë butonat ose mungojnë skedarët</span>
+          <span class="text-slate-400">• Asnjë kod manual në konsolë</span>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Agent Simulator Section -->
-    <section id="simulator" class="py-16 bg-dark-900 border-y border-slate-800">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6">
-        <div class="text-center mb-10">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Simulatori në Kohë Reale</span>
+    <!-- Visual Google Chrome Simulation Section (SMIP Portal Interface) -->
+    <section id="chrome-demo" class="py-6 px-4 sm:px-6 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span>Pamja Vizuale në Google Chrome (Demo Live)</span>
+          </h2>
+          <p class="text-xs text-slate-400">Ndiqni veprimet e agjentit në ndërfaqen reale të regjistrit të SMIP me të dhëna model (Mock Data).</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center space-x-3">
+          <button id="btn-play-demo" onclick="startVisualDemo()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs shadow-md shadow-blue-500/20 flex items-center space-x-1.5 transition">
+            <span id="play-btn-icon">▶</span>
+            <span id="play-btn-text">Nis Demonstrimin e Agjentit</span>
+          </button>
+          <button onclick="resetVisualDemo()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs border border-slate-700 transition">
+            ↺ Rifillo
+          </button>
+        </div>
+      </div>
+
+      <!-- Real Google Chrome Browser Frame Window -->
+      <div class="rounded-xl border border-slate-700/80 bg-[#1e293b] shadow-2xl overflow-hidden">
+        <!-- Chrome Top Titlebar & Tabs -->
+        <div class="bg-[#0f172a] px-3 pt-2.5 pb-1 flex items-center space-x-2 border-b border-slate-800 select-none">
+          <!-- Window Controls (Red, Yellow, Green) -->
+          <div class="flex items-center space-x-1.5 mr-3">
+            <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
           </div>
-          <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Si e Punon Agjenti AI në SMIP?</h2>
-          <p class="text-slate-400 text-sm max-w-2xl mx-auto">
-            Ndiqni hap pas hapi se si agjenti kupton kërkesën, analizon planin mësimor, llogarit pushimet dhe hedh temat vetë në shfletues me Playwright.
+
+          <!-- Chrome Tab -->
+          <div class="bg-[#1e293b] text-slate-200 text-xs px-3.5 py-1.5 rounded-t-lg flex items-center space-x-2 border-t border-x border-slate-700 max-w-[240px]">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="truncate font-medium">SMIP - Regjistri Ditor</span>
+            <span class="text-slate-400 hover:text-white cursor-pointer ml-auto">×</span>
+          </div>
+          <div class="text-slate-500 text-xs px-2 hover:text-slate-300 cursor-pointer">+</div>
+        </div>
+
+        <!-- Chrome URL Bar (Omnibox) -->
+        <div class="bg-[#1e293b] px-4 py-2 flex items-center space-x-3 border-b border-slate-800">
+          <div class="flex items-center space-x-2 text-slate-400">
+            <svg class="w-4 h-4 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <svg class="w-4 h-4 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <svg class="w-4 h-4 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.038 8.038 0 01-15.357-2m15.357 2H15"/></svg>
+          </div>
+
+          <!-- Address Input -->
+          <div class="flex-1 bg-[#0f172a] rounded-full px-3.5 py-1 text-xs text-slate-300 flex items-center justify-between border border-slate-700">
+            <div class="flex items-center space-x-2">
+              <span class="text-emerald-400">🔒</span>
+              <span class="text-slate-100 font-mono">https://smip.al/teacher/registry?tab=daily-register</span>
+            </div>
+            <div class="flex items-center space-x-1.5 text-[10px] text-slate-400">
+              <span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">CDP Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- INSIDE CHROME: Actual SMIP Portal Interface -->
+        <div class="bg-white text-slate-800 p-4 sm:p-6 min-h-[520px] relative select-none overflow-hidden font-sans">
+          
+          <!-- Floating AI Agent Cursor & Tooltip Indicator -->
+          <div id="ai-cursor" class="absolute pointer-events-none transition-all duration-700 ease-in-out z-40 hidden" style="top: 130px; right: 220px;">
+            <div class="flex items-center space-x-2 bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-2xl border-2 border-white agent-cursor">
+              <span>🤖 Agjenti AI</span>
+              <span id="ai-action-badge" class="bg-blue-800 px-1.5 py-0.5 rounded text-[10px] font-mono">Duke vepruar...</span>
+            </div>
+            <!-- Arrow Cursor Graphic -->
+            <svg class="w-6 h-6 text-blue-600 drop-shadow-md -mt-1 ml-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+            </svg>
+          </div>
+
+          <!-- SMIP Brand Header inside Portal -->
+          <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-200">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded bg-red-700 text-white flex items-center justify-center font-bold text-xs">
+                SMIP
+              </div>
+              <div>
+                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-tight">Portali i Mësuesit • Regjistri Shkollor</h3>
+                <p class="text-[11px] text-slate-500">Mësuesi: <strong class="text-slate-700">Zojë Vladi</strong> | Klasa në Kujdestari: <strong>Klasa 6 dhe 8</strong></p>
+              </div>
+            </div>
+            <div class="text-xs text-slate-500 flex items-center space-x-3">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Llogari Aktive</span>
+            </div>
+          </div>
+
+          <!-- SMIP Tabs Navigation -->
+          <div class="flex items-center space-x-6 border-b border-slate-200 text-xs font-semibold text-slate-500 mt-2">
+            <div class="py-2.5 border-b-2 border-blue-600 text-blue-600 cursor-pointer">Regjistri i lëndës (Ditor)</div>
+            <div class="py-2.5 hover:text-slate-800 cursor-pointer">Regjistri i periudhës</div>
+            <div class="py-2.5 hover:text-slate-800 cursor-pointer">Vlerësimet vjetore</div>
+          </div>
+
+          <!-- SMIP Filter Toolbar -->
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 mt-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-3">
+              <div>
+                <span class="text-[10px] text-slate-500 block uppercase font-bold">Lëndë me zgjedhje</span>
+                <span class="px-2.5 py-1 bg-white border border-slate-300 rounded font-medium text-slate-700 block">Jo</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 block uppercase font-bold">Klasa</span>
+                <span id="filter-class" class="px-2.5 py-1 bg-white border border-slate-300 rounded font-medium text-slate-700 block transition">Klasa 6 – 8</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 block uppercase font-bold">Lënda</span>
+                <span id="filter-subject" class="px-2.5 py-1 bg-white border border-slate-300 rounded font-medium text-slate-700 block transition">Edukim Fizik</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 block uppercase font-bold">Muaji</span>
+                <span id="filter-month" class="px-2.5 py-1 bg-white border border-slate-300 rounded font-medium text-slate-700 block transition">10/2026</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons in SMIP -->
+            <div class="flex items-center space-x-2">
+              <button id="smip-btn-add" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded flex items-center space-x-1 shadow transition">
+                <span>+</span>
+                <span>Shto temë</span>
+              </button>
+              <button id="smip-btn-save" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded flex items-center space-x-1 shadow transition">
+                <span>💾</span>
+                <span id="save-btn-text">Ruaj Ndryshimet</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SMIP Registry Table with Realistic Mock Data -->
+          <div class="mt-4 border border-slate-200 rounded-lg overflow-x-auto shadow-sm">
+            <table class="w-full text-xs text-left text-slate-700 border-collapse">
+              <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
+                <tr>
+                  <th class="p-2 border-r border-slate-200 w-8 text-center">Nr</th>
+                  <th class="p-2 border-r border-slate-200 w-44">Nxënësi (Mock Data)</th>
+                  <!-- Date Column Headers with Mock Lesson Tooltips -->
+                  <th id="col-02" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>02.10</div>
+                    <div id="badge-02" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-05" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>05.10</div>
+                    <div id="badge-05" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-09" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>09.10</div>
+                    <div id="badge-09" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-12" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>12.10</div>
+                    <div id="badge-12" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-16" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>16.10</div>
+                    <div id="badge-16" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-19" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>19.10</div>
+                    <div id="badge-19" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-23" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>23.10</div>
+                    <div id="badge-23" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-26" class="p-2 border-r border-slate-200 text-center w-20 transition">
+                    <div>26.10</div>
+                    <div id="badge-26" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                  <th id="col-30" class="p-2 text-center w-20 transition">
+                    <div>30.10</div>
+                    <div id="badge-30" class="text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto">Pa temë</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 text-center font-mono">
+                <!-- Mock Student 1 -->
+                <tr class="hover:bg-blue-50/60">
+                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">1</td>
+                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Arbër Hoxha</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 font-bold text-emerald-600">10</td>
+                </tr>
+                <!-- Mock Student 2 -->
+                <tr class="hover:bg-blue-50/60">
+                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">2</td>
+                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Bora Kelmendi</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 font-bold text-emerald-600">10</td>
+                </tr>
+                <!-- Mock Student 3 -->
+                <tr class="hover:bg-blue-50/60">
+                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">3</td>
+                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Drin Zeka</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 font-bold text-blue-600">8</td>
+                </tr>
+                <!-- Mock Student 4 -->
+                <tr class="hover:bg-blue-50/60">
+                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">4</td>
+                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Elira Berisha</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">9</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-emerald-600">10</td>
+                  <td class="p-2 font-bold text-emerald-600">9</td>
+                </tr>
+                <!-- Mock Student 5 -->
+                <tr class="hover:bg-blue-50/60">
+                  <td class="p-2 border-r border-slate-200 font-bold text-slate-500">5</td>
+                  <td class="p-2 border-r border-slate-200 text-left font-sans font-medium text-slate-800">Jon Dervishi</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-rose-600">M</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">8</td>
+                  <td class="p-2 border-r border-slate-200 font-bold text-blue-600">7</td>
+                  <td class="p-2 font-bold text-blue-600">8</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Realistic SMIP Modal Popup (Appears during Demo) -->
+          <div id="smip-modal" class="absolute inset-0 bg-black/50 backdrop-blur-sm z-30 flex items-center justify-center hidden">
+            <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-md p-5 text-slate-800 transform transition-all scale-95 fade-enter">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800">Shto Temë të Re Mësimore</h4>
+                <span class="text-slate-400 font-bold cursor-pointer">×</span>
+              </div>
+              <div class="space-y-3.5 py-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-600 mb-1">Data e Orës</label>
+                  <input type="text" id="modal-input-date" class="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 font-mono text-slate-800 focus:outline-none" readonly>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-600 mb-1">Tema Mësimore</label>
+                  <input type="text" id="modal-input-name" class="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 font-medium text-slate-800 focus:outline-none" readonly>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-600 mb-1">Situata e Parashikuar e të Nxënit</label>
+                  <input type="text" id="modal-input-situata" class="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-slate-600 focus:outline-none" readonly>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-slate-200 flex justify-end space-x-2">
+                <button class="px-3 py-1.5 rounded border border-slate-300 text-xs text-slate-600">Anulo</button>
+                <button id="modal-btn-confirm" class="px-4 py-1.5 rounded bg-blue-600 text-white font-bold text-xs shadow">Konfirmo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Success Notification Toast in SMIP -->
+          <div id="smip-toast" class="absolute bottom-5 right-5 bg-emerald-600 text-white text-xs font-bold px-4 py-3 rounded-lg shadow-xl flex items-center space-x-2 hidden fade-enter z-30">
+            <span>✓</span>
+            <span id="toast-message">Ndryshimet u ruajtën me sukses në SMIP!</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Self-Healing & Adaptive Fallback Section (Dinamizmi) -->
+    <section id="self-healing" class="py-16 max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
+          <span>🧠 Inteligjencë Vetë-Riparuese</span>
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Agjent Dinamik: Zgjidh Çdo Pengesë Vetë</h2>
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+          Ndryshe nga skriptet e thjeshta që ndalojnë me gabim, ky skill ka aftësi të integruar vetë-riparuese. Nëse ndonjë komandë apo skedar dështon, agjenti gjen vetë mënyrën alternative për të përfunduar detyrën.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Self-Healing Card 1 -->
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold mb-4">
+            🔄
+          </div>
+          <h3 class="text-base font-bold text-white mb-2">Vetë-Riparim i Selektorëve të SMIP</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Nëse ndërfaqja e portalit ndryshon ID-të e butonave (`#add-topic` apo dropdown-ve të React Select), agjenti nuk ndalet: kalon automatikisht në kërkim semantik sipas etiketave, tekstit dhe strukturës së DOM-it.
           </p>
         </div>
 
-        <!-- Scenario Selector Tabs -->
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div class="flex flex-wrap items-center gap-2" id="scenario-tabs">
-            <button onclick="setScenario('6-8')" id="tab-6-8" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-black shadow-sm">
-              Klasa 6–8 | Edukim Fizik (Tetor 2026)
-            </button>
-            <button onclick="setScenario('3')" id="tab-3" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-dark-950 text-slate-300 border border-slate-800 hover:border-slate-700">
-              Klasa 3 | Anglisht Smiles 3 (Tetor 2026)
-            </button>
-            <button onclick="setScenario('11-12')" id="tab-11-12" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-dark-950 text-slate-300 border border-slate-800 hover:border-slate-700">
-              Klasa 11–12 | Edukim Fizik (Shtator 2026)
-            </button>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <button onclick="restartSimulation()" class="px-3 py-1.5 rounded-lg bg-dark-950 hover:bg-slate-800 text-xs text-slate-300 border border-slate-800 flex items-center space-x-1.5 transition">
-              <span>↺ Rifillo</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Terminal Window Container -->
-        <div class="rounded-2xl border border-slate-800 bg-black/90 shadow-2xl overflow-hidden font-mono text-xs leading-relaxed">
-          <!-- Terminal Titlebar -->
-          <div class="bg-dark-950/80 px-4 py-3 border-b border-slate-800 flex items-center justify-between select-none">
-            <div class="flex items-center space-x-2">
-              <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
-              <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
-              <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
-              <span class="ml-2 text-slate-400 font-medium">antigravity@smip-agent: ~/smip-skill</span>
-            </div>
-            <div class="flex items-center space-x-2 text-[11px] text-slate-400">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="agent-status" class="text-emerald-400 font-semibold">Autonomous Bot Active</span>
-            </div>
-          </div>
-
-          <!-- Terminal Content Area -->
-          <div id="terminal-screen" class="p-6 h-[420px] overflow-y-auto space-y-2.5 text-slate-300 font-mono scroll-smooth">
-            <!-- Simulated logs will appear here -->
-          </div>
-
-          <!-- Terminal Footer Status Bar -->
-          <div class="bg-dark-950/90 px-4 py-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-            <div class="flex items-center space-x-3">
-              <span>Mënyra: <strong class="text-slate-200">Headless Playwright</strong></span>
-              <span>•</span>
-              <span>Portali: <strong class="text-emerald-400">smip.al/teacher</strong></span>
-            </div>
-            <div id="terminal-progress" class="text-slate-400">Duke pritur komandën...</div>
-          </div>
-        </div>
-
-        <!-- Metric Badges Under Terminal -->
-        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <div class="text-emerald-400 font-bold text-lg">0 Sekonda</div>
-            <div class="text-xs text-slate-400 mt-0.5">Ndërhyrje Manuale</div>
-          </div>
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <div class="text-emerald-400 font-bold text-lg">100% Saktësi</div>
-            <div class="text-xs text-slate-400 mt-0.5">Pushimet e MAS</div>
-          </div>
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <div class="text-emerald-400 font-bold text-lg">Playwright</div>
-            <div class="text-xs text-slate-400 mt-0.5">Bot Autonom në Portal</div>
-          </div>
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <div class="text-emerald-400 font-bold text-lg">24h Safe</div>
-            <div class="text-xs text-slate-400 mt-0.5">Rregulli i Miratimit</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-20 max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-extrabold text-white mb-3">Pse është krijuar SMIP Skill?</h2>
-        <p class="text-slate-400 max-w-2xl mx-auto">Hedhja manuale e 17 orëve javore në regjistrin e SMIP kërkon orë të tëra çdo muaj. Ky skill e zgjidh plotësisht këtë proces.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-dark-900/60 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition">
-          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold mb-4">
+        <!-- Self-Healing Card 2 -->
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold mb-4">
             📅
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">Kalendari Shkollor & Pushimet</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Njeh saktësisht pushimet e dimrit, pranverës, festat kombëtare dhe festat fetare të lëvizshme (Fitër/Kurban Bajrami, Pashkët). Asnjë temë nuk vendoset në ditë pushimi.
+          <h3 class="text-base font-bold text-white mb-2">Gjetje e Pavarur e Pushimeve</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Nëse mungon skedari i festave, motori <code class="text-emerald-400">holiday_finder.py</code> i shkarkon automatikisht festat kombëtare online nga shërbimi zyrtar ose llogarit algoritmikisht Pashkët, Bajramet dhe pushimet shkollore.
           </p>
         </div>
 
-        <div class="bg-dark-900/60 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition">
-          <div class="w-10 h-10 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold mb-4">
-            📄
+        <!-- Self-Healing Card 3 -->
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold mb-4">
+            ⚡
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">Parsim i Planeve Word & PDF</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Lexon drejtpërdrejt skedarët e shkarkuar nga Albas, Pegi, Mediaprint, ASCAP apo Smiles. Nxjerr automatikisht titujt e temave dhe situatat e të nxënit.
-          </p>
-        </div>
-
-        <div class="bg-dark-900/60 p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition">
-          <div class="w-10 h-10 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold mb-4">
-            🤖
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">Inserim 100% Autonom nga Agjenti</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Agjenti përdor Playwright për të lundruar vetë te smip.al, zgjedhur filtrat dhe plotësuar temat njëra pas tjetrës. Nuk kërkohet asnjë veprim manual apo kopjim në Console.
+          <h3 class="text-base font-bold text-white mb-2">Auto-Bridge me Google Chrome</h3>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Nëse dështon lidhja CDP në portën 9222, agjenti provon të nisë Chrome-in tuaj lokal, përdor sesionin e ruajtur Playwright, ose hap dritaren e dukshme që të mos keni asnjë ndërprerje.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Installation Section -->
-    <section id="install" class="py-16 bg-dark-900 border-t border-slate-800">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <!-- Multi-Agent Ecosystem Section -->
+    <section id="agents" class="py-14 bg-[#0b1320] border-t border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-10">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">Instalimi me Agjentët AI</h2>
-          <p class="text-slate-400 text-sm">Përdoreni këtë skill me Antigravity, Claude Code, Cursor ose nga Terminali.</p>
+          <h2 class="text-2xl font-bold text-white mb-2">Mbështetje Universale për Agjentët AI</h2>
+          <p class="text-slate-400 text-xs">Përdoreni me agjentin tuaj të preferuar përmes protokollit standard MCP.</p>
         </div>
 
-        <div class="space-y-4">
-          <!-- Antigravity -->
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-1">Google Antigravity (Skill + Chrome CDP / /browser)</span>
-            <code class="block font-mono text-sm text-slate-200 bg-dark-900 p-2.5 rounded border border-slate-800">git clone https://github.com/adalenv/smip-skill.git .agents/skills/smip</code>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-center text-xs">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Antigravity</div>
+            <div class="text-[11px] text-emerald-400 font-mono">Chrome CDP & /browser</div>
           </div>
-
-          <!-- Claude Code -->
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider block mb-1">Claude Code (MCP Server)</span>
-            <code class="block font-mono text-sm text-slate-200 bg-dark-900 p-2.5 rounded border border-slate-800">claude mcp add smip node ./scripts/smip_mcp.js</code>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Claude Code</div>
+            <div class="text-[11px] text-purple-400 font-mono">Native MCP Server</div>
           </div>
-
-          <!-- Cursor -->
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider block mb-1">Cursor & Windsurf (Native MCP / .cursorrules)</span>
-            <code class="block font-mono text-sm text-slate-200 bg-dark-900 p-2.5 rounded border border-slate-800">Përdor automatikisht .cursor/mcp.json dhe .cursorrules në hapjen e projektit</code>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Cursor</div>
+            <div class="text-[11px] text-sky-400 font-mono">.cursor/mcp.json</div>
           </div>
-
-          <!-- Terminal Node & Python CLI -->
-          <div class="bg-dark-950 p-4 rounded-xl border border-slate-800">
-            <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider block mb-1">Google Chrome Direct (CDP Port 9222)</span>
-            <code class="block font-mono text-sm text-slate-200 bg-dark-900 p-2.5 rounded border border-slate-800">node scripts/smip_bot.js --open-chrome --topics temat_tetor_2026.json</code>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Windsurf</div>
+            <div class="text-[11px] text-teal-400 font-mono">Cascade Tools</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Cline / Roo</div>
+            <div class="text-[11px] text-amber-400 font-mono">Browser Actions</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="font-bold text-white mb-1">Devin</div>
+            <div class="text-[11px] text-rose-400 font-mono">Chrome VM</div>
           </div>
         </div>
       </div>
@@ -273,269 +489,229 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-800 py-8 bg-dark-950 text-center text-xs text-slate-500">
-    <p>Ndërtuar me ❤️ për mësuesit në Shqipëri nga <a href="https://github.com/adalenv" class="text-slate-300 hover:text-white underline">Adalenv</a>. Licencuar nën MIT License.</p>
+  <footer class="border-t border-slate-800 py-6 bg-slate-950 text-center text-xs text-slate-500">
+    <p>Ndërtuar me ❤️ për arsimin parauniversitar në Shqipëri nga <a href="https://github.com/adalenv" class="text-slate-300 hover:text-white underline font-medium">Adalenv</a>. Licenca MIT.</p>
   </footer>
 
-  <!-- Interactive Simulator Engine -->
+  <!-- Visual Interactive Chrome Simulation Logic -->
   <script>
-    const scenarios = {
-      "6-8": {
-        userPrompt: "hedh temat e Tetorit 2026 për Klasën 6-8 Edukim Fizik",
-        planFile: "EDUKIM_FIZIK_6_Plani_me_simor_vjetor.docx",
-        grade: "Klasa 6 - 8",
-        subject: "Edukim Fizik",
-        period: "10/2026",
-        hoursCount: 13,
-        topics: [
-          { date: "02.10.2026", title: "Gjimnastikë: Kapërcimi i Kaluçit" },
-          { date: "05.10.2026", title: "Matjet Antropometrike (Ora 1)" },
-          { date: "05.10.2026", title: "Lojë lëvizore: Qitje në shënjestër (Ora 2)" },
-          { date: "09.10.2026", title: "Hendboll: Pasimi me një dorë mbi shpatull" },
-          { date: "12.10.2026", title: "Hendboll: Driblimi me ndryshim drejtimi (Ora 1)" },
-          { date: "12.10.2026", title: "Edukim shëndetësor: Postura trupore (Ora 2)" },
-          { date: "16.10.2026", title: "Lojë popullore: Lufta e gjelave" },
-          { date: "19.10.2026", title: "Gjimnastikë ritmike: Ushtrime me litar (Ora 1)" },
-          { date: "19.10.2026", title: "Përsëritje: Ushtrime me litar në grup (Ora 2)" },
-          { date: "23.10.2026", title: "Basketboll: Pasimi nga gjoksi" },
-          { date: "26.10.2026", title: "Basketboll: Driblimi i lartë dhe i ulët (Ora 1)" },
-          { date: "26.10.2026", title: "Edukim shëndetësor: Rëndësia e hidratimit (Ora 2)" },
-          { date: "30.10.2026", title: "Përsëritje: Lojëra sportive me rregulla" }
-        ]
+    const mockTopicsQueue = [
+      {
+        colId: "col-02",
+        badgeId: "badge-02",
+        date: "02.10.2026",
+        tema: "Gjimnastikë: Kapërcimi i Kaluçit",
+        situata: "Fazat e amortizimit dhe mbështetjes së krahëve"
       },
-      "3": {
-        userPrompt: "përgatit dhe shto temat e Tetorit për Klasën 3 Anglisht (Smiles 3)",
-        planFile: "3.1 Smiles 3 plani vjetor 24-25.docx",
-        grade: "Klasa 3",
-        subject: "Anglisht",
-        period: "10/2026",
-        hoursCount: 13,
-        topics: [
-          { date: "02.10.2026", title: "Module 1: In the classroom (School objects)" },
-          { date: "07.10.2026", title: "Colours and Shapes (Vocabulary)" },
-          { date: "07.10.2026", title: "Grammar: Plural nouns (-s) & Flashcards" },
-          { date: "09.10.2026", title: "Song: I like drawing! (Action rhymes)" },
-          { date: "14.10.2026", title: "Module 2: My toys (doll, ball, bike)" },
-          { date: "14.10.2026", title: "Grammar: Have got / Has got in pairs" },
-          { date: "16.10.2026", title: "Story time: Woody the Toy (Reading)" },
-          { date: "21.10.2026", title: "Numbers 20 to 50 (Math in English)" },
-          { date: "21.10.2026", title: "Listening Practice: Audio CD track 12" },
-          { date: "23.10.2026", title: "Writing: Describe my room (Prepositions)" },
-          { date: "28.10.2026", title: "Checkpoint 1: Revision Unit 1-2" },
-          { date: "28.10.2026", title: "First Term Project: My toy poster" },
-          { date: "30.10.2026", title: "Culture Corner: School life in UK" }
-        ]
+      {
+        colId: "col-05",
+        badgeId: "badge-05",
+        date: "05.10.2026",
+        tema: "Matjet Antropometrike (Ora 1)",
+        situata: "Matje të perimetrave dhe peshës trupore"
       },
-      "11-12": {
-        userPrompt: "hedh temat e Shtatorit për Klasën 11-12 Edukim Fizik",
-        planFile: "1.-EDUKIM-FIZIK-12-Plani-mesimor-vjetor.docx",
-        grade: "Klasa 11 - 12",
-        subject: "Edukim Fizik",
-        period: "09/2026",
-        hoursCount: 9,
-        topics: [
-          { date: "14.09.2026", title: "Matjet Antropometrike (Vlerësimi fillestar)" },
-          { date: "14.09.2026", title: "Ushtrime të rreshtimit dhe rregullimit" },
-          { date: "15.09.2026", title: "Mirëqenia fizike dhe stili aktiv i jetës" },
-          { date: "21.09.2026", title: "Lojë lëvizore: Topi goditës" },
-          { date: "21.09.2026", title: "Përsëritje: Topi goditës në hapësirë të kufizuar" },
-          { date: "22.09.2026", title: "Lojë popullore: Garda e mbrojtjes" },
-          { date: "28.09.2026", title: "Kapërcimi i Kaluçit me mbledhje këmbësh" },
-          { date: "28.09.2026", title: "Përsëritje: Kapërcimi i Kaluçit" },
-          { date: "29.09.2026", title: "Edukim shëndetësor: Parimet e të ushqyerit" }
-        ]
+      {
+        colId: "col-09",
+        badgeId: "badge-09",
+        date: "09.10.2026",
+        tema: "Hendboll: Pasimi me një dorë",
+        situata: "Teknika e pasimit të shpejtë në dyshe"
+      },
+      {
+        colId: "col-12",
+        badgeId: "badge-12",
+        date: "12.10.2026",
+        tema: "Edukim shëndetësor: Postura trupore",
+        situata: "Përmirësimi i qëndrimit dhe shmangia e lodhjes"
       }
-    };
+    ];
 
-    let activeScenarioKey = "6-8";
-    let simTimeoutIds = [];
+    let demoTimeoutIds = [];
+    let isRunning = false;
 
-    function clearSimulation() {
-      simTimeoutIds.forEach(id => clearTimeout(id));
-      simTimeoutIds = [];
-      const screen = document.getElementById("terminal-screen");
-      if (screen) screen.innerHTML = "";
+    function clearTimeouts() {
+      demoTimeoutIds.forEach(id => clearTimeout(id));
+      demoTimeoutIds = [];
     }
 
-    function appendLine(htmlContent, delay) {
-      const id = setTimeout(() => {
-        const screen = document.getElementById("terminal-screen");
-        if (!screen) return;
-        const line = document.createElement("div");
-        line.innerHTML = htmlContent;
-        screen.appendChild(line);
-        screen.scrollTop = screen.scrollHeight;
-      }, delay);
-      simTimeoutIds.push(id);
-    }
+    function resetVisualDemo() {
+      clearTimeouts();
+      isRunning = false;
 
-    function updateProgress(text, delay) {
-      const id = setTimeout(() => {
-        const p = document.getElementById("terminal-progress");
-        if (p) p.innerText = text;
-      }, delay);
-      simTimeoutIds.push(id);
-    }
-
-    function runScenario(key) {
-      clearSimulation();
-      const s = scenarios[key];
-      const prog = document.getElementById("terminal-progress");
-      if (prog) prog.innerText = "Duke nisur agjentin...";
-
-      let t = 100;
-
-      // 1. User Prompt
-      appendLine(`
-        <div class="flex items-start space-x-2 pt-1 pb-2 border-b border-slate-800/80">
-          <span class="text-emerald-400 font-bold">mësuesi@shkolla:~$</span>
-          <span class="text-white font-medium">agy smip "${s.userPrompt}"</span>
-        </div>
-      `, t);
-
-      t += 500;
-      // 2. Agent Initialization
-      appendLine(`
-        <div class="text-emerald-400 font-semibold flex items-center space-x-2">
-          <span>🤖 [Antigravity SMIP Skill]</span>
-          <span class="text-slate-300">Po filloj automatizimin e regjistrit mësimor...</span>
-        </div>
-      `, t);
-
-      t += 600;
-      // 3. Document Search
-      appendLine(`
-        <div class="text-slate-300">
-          <span class="text-teal-400">📂 [1/5 Kërkimi]</span> Duke kontrolluar <code class="text-amber-300 bg-dark-950 px-1 rounded">smip_docs/</code> për klasën <strong>${s.grade}</strong>...
-        </div>
-      `, t);
-
-      t += 500;
-      appendLine(`
-        <div class="text-slate-400 pl-4 border-l border-emerald-500/30">
-          ✓ U gjet plani zyrtar: <span class="text-emerald-300 font-medium">${s.planFile}</span>
-        </div>
-      `, t);
-
-      t += 700;
-      // 4. Holiday & Schedule Analysis
-      appendLine(`
-        <div class="text-slate-300">
-          <span class="text-sky-400">📅 [2/5 Kalendari MAS]</span> Duke lexuar <code class="text-slate-200">kalendari_pushimeve.json</code>...
-        </div>
-      `, t);
-
-      t += 400;
-      appendLine(`
-        <div class="text-slate-400 pl-4 border-l border-sky-500/30">
-          ✓ Përjashtova fundjavat dhe pushimet zyrtare shkollore.<br>
-          ✓ Llogarita datat e sakta: <span class="text-white font-semibold">${s.hoursCount} orë mësimore</span> për periudhën <strong>${s.period}</strong>.
-        </div>
-      `, t);
-
-      t += 700;
-      // 5. Browser Automation (Playwright)
-      appendLine(`
-        <div class="text-slate-300">
-          <span class="text-purple-400">🌐 [3/5 Playwright Bot]</span> Duke hapur shfletuesin në <a href="https://smip.al" class="text-purple-300 underline">https://smip.al/teacher/registry</a>...
-        </div>
-      `, t);
-
-      t += 500;
-      appendLine(`
-        <div class="text-slate-400 pl-4 border-l border-purple-500/30">
-          ✓ Sesioni i vlefshëm u gjet te <code class="text-slate-200">.smip_session/storage_state.json</code> (Login i menjëhershëm).<br>
-          ✓ Vendosa filtrat në portal: Klasa: <strong>${s.grade}</strong> | Lënda: <strong>${s.subject}</strong> | Muaji: <strong>${s.period}</strong>
-        </div>
-      `, t);
-
-      t += 700;
-      // 6. Topics Insertion Stream
-      appendLine(`
-        <div class="text-slate-300">
-          <span class="text-amber-400">✍️ [4/5 Inserimi]</span> Duke klikuar <code class="text-white">#add-topic</code> dhe plotësuar temat modal-pas-modali...
-        </div>
-      `, t);
-
-      // Show first 4 topics in detail
-      const sampleTopics = s.topics.slice(0, 4);
-      sampleTopics.forEach((top, idx) => {
-        t += 350;
-        appendLine(`
-          <div class="text-slate-400 pl-4 font-mono text-[11px]">
-            <span class="text-emerald-400">✓ [${idx + 1}/${s.hoursCount}]</span> ${top.date} ➔ <span class="text-slate-200 font-sans">${top.title}</span>
-          </div>
-        `, t);
-      });
-
-      if (s.topics.length > 4) {
-        t += 400;
-        appendLine(`
-          <div class="text-slate-500 pl-4 italic text-[11px]">
-            ... dhe ${s.topics.length - 4} tema të tjera u inseruan me sukses në modal.
-          </div>
-        `, t);
-
-        const lastTopic = s.topics[s.topics.length - 1];
-        t += 300;
-        appendLine(`
-          <div class="text-slate-400 pl-4 font-mono text-[11px]">
-            <span class="text-emerald-400">✓ [${s.hoursCount}/${s.hoursCount}]</span> ${lastTopic.date} ➔ <span class="text-slate-200 font-sans">${lastTopic.title}</span>
-          </div>
-        `, t);
-      }
-
-      t += 600;
-      // 7. Bulk Save
-      appendLine(`
-        <div class="text-slate-300">
-          <span class="text-emerald-400">💾 [5/5 Ruajtja Finale]</span> Duke klikuar <code class="text-emerald-300 bg-emerald-950/60 px-1 py-0.5 rounded border border-emerald-500/30">#bulk-save-grades</code> ("Ruaj Ndryshimet")...
-        </div>
-      `, t);
-
-      t += 500;
-      appendLine(`
-        <div class="text-emerald-400 pl-4 border-l border-emerald-500">
-          ✓ Të gjitha temat u ruajtën në bazën e të dhënave të shkollës në SMIP!
-        </div>
-      `, t);
-
-      t += 400;
-      appendLine(`
-        <div class="mt-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="text-base">🎉</span>
-            <span class="font-sans font-semibold">Procesi përfundoi 100% Autonomisht me Playwright!</span>
-          </div>
-          <span class="text-[11px] font-mono text-emerald-400">Koha: 4.8s • 0 Gabime</span>
-        </div>
-      `, t);
-
-      updateProgress("✓ Përfunduar me sukses!", t);
-    }
-
-    function setScenario(key) {
-      activeScenarioKey = key;
-      // Update Tab Styles
-      ["6-8", "3", "11-12"].forEach(k => {
-        const btn = document.getElementById(`tab-${k}`);
-        if (!btn) return;
-        if (k === key) {
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-black shadow-sm";
-        } else {
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-dark-950 text-slate-300 border border-slate-800 hover:border-slate-700";
+      // Reset badges
+      ["02", "05", "09", "12", "16", "19", "23", "26", "30"].forEach(id => {
+        const col = document.getElementById(`col-${id}`);
+        const badge = document.getElementById(`badge-${id}`);
+        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 transition";
+        if (badge) {
+          badge.innerText = "Pa temë";
+          badge.className = "text-[9px] font-normal text-slate-400 truncate max-w-[70px] mx-auto";
         }
       });
-      runScenario(key);
+
+      // Reset modal and cursor
+      const modal = document.getElementById("smip-modal");
+      const cursor = document.getElementById("ai-cursor");
+      const toast = document.getElementById("smip-toast");
+      const saveBtnText = document.getElementById("save-btn-text");
+
+      if (modal) modal.classList.add("hidden");
+      if (cursor) cursor.classList.add("hidden");
+      if (toast) toast.classList.add("hidden");
+      if (saveBtnText) saveBtnText.innerText = "Ruaj Ndryshimet";
+
+      const playText = document.getElementById("play-btn-text");
+      if (playText) playText.innerText = "Nis Demonstrimin e Agjentit";
     }
 
-    function restartSimulation() {
-      runScenario(activeScenarioKey);
+    function moveCursor(x, y, actionText, delay) {
+      const id = setTimeout(() => {
+        const cursor = document.getElementById("ai-cursor");
+        const actionBadge = document.getElementById("ai-action-badge");
+        if (!cursor) return;
+        cursor.classList.remove("hidden");
+        cursor.style.top = `${y}px`;
+        cursor.style.left = `${x}px`;
+        if (actionBadge && actionText) actionBadge.innerText = actionText;
+      }, delay);
+      demoTimeoutIds.push(id);
     }
 
-    // Run initial simulation on page load
+    function typeInField(fieldId, text, delay) {
+      const id = setTimeout(() => {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.value = "";
+        let charIdx = 0;
+        const interval = setInterval(() => {
+          if (charIdx < text.length) {
+            field.value += text[charIdx++];
+          } else {
+            clearInterval(interval);
+          }
+        }, 25);
+      }, delay);
+      demoTimeoutIds.push(id);
+    }
+
+    function startVisualDemo() {
+      if (isRunning) return;
+      resetVisualDemo();
+      isRunning = true;
+
+      const playText = document.getElementById("play-btn-text");
+      if (playText) playText.innerText = "Agjenti po vepron...";
+
+      let timeline = 200;
+
+      // 1. Move cursor to "+ Shto temë"
+      moveCursor(680, 115, "Klikon '+ Shto temë'", timeline);
+
+      timeline += 800;
+      // 2. Open Modal for Topic 1
+      const idModalOpen1 = setTimeout(() => {
+        const modal = document.getElementById("smip-modal");
+        if (modal) modal.classList.remove("hidden");
+      }, timeline);
+      demoTimeoutIds.push(idModalOpen1);
+
+      // Type data, tema, situata in modal
+      const t1 = mockTopicsQueue[0];
+      typeInField("modal-input-date", t1.date, timeline + 200);
+      typeInField("modal-input-name", t1.tema, timeline + 500);
+      typeInField("modal-input-situata", t1.situata, timeline + 800);
+
+      timeline += 1600;
+      // Move cursor to "Konfirmo" button
+      moveCursor(580, 340, "Konfirmon në modal", timeline);
+
+      timeline += 600;
+      // Close modal and highlight table column
+      const idModalClose1 = setTimeout(() => {
+        const modal = document.getElementById("smip-modal");
+        if (modal) modal.classList.add("hidden");
+
+        const col = document.getElementById(t1.colId);
+        const badge = document.getElementById(t1.badgeId);
+        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+        if (badge) {
+          badge.innerText = "✓ " + t1.tema;
+          badge.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
+        }
+      }, timeline);
+      demoTimeoutIds.push(idModalClose1);
+
+      timeline += 600;
+      // 3. Move cursor back to "+ Shto temë" for Topic 2
+      moveCursor(680, 115, "Shton temën 2...", timeline);
+
+      timeline += 700;
+      const idModalOpen2 = setTimeout(() => {
+        const modal = document.getElementById("smip-modal");
+        if (modal) modal.classList.remove("hidden");
+      }, timeline);
+      demoTimeoutIds.push(idModalOpen2);
+
+      const t2 = mockTopicsQueue[1];
+      typeInField("modal-input-date", t2.date, timeline + 200);
+      typeInField("modal-input-name", t2.tema, timeline + 500);
+      typeInField("modal-input-situata", t2.situata, timeline + 800);
+
+      timeline += 1500;
+      moveCursor(580, 340, "Konfirmon temën 2", timeline);
+
+      timeline += 600;
+      const idModalClose2 = setTimeout(() => {
+        const modal = document.getElementById("smip-modal");
+        if (modal) modal.classList.add("hidden");
+
+        const col = document.getElementById(t2.colId);
+        const badge = document.getElementById(t2.badgeId);
+        if (col) col.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+        if (badge) {
+          badge.innerText = "✓ " + t2.tema;
+          badge.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
+        }
+
+        // Fast populate remaining mock dates to demonstrate batch speed
+        mockTopicsQueue.slice(2).forEach(item => {
+          const c = document.getElementById(item.colId);
+          const b = document.getElementById(item.badgeId);
+          if (c) c.className = "p-2 border-r border-slate-200 text-center w-20 bg-emerald-50 text-emerald-800 font-bold transition";
+          if (b) {
+            b.innerText = "✓ " + item.tema;
+            b.className = "text-[9px] font-bold text-emerald-600 truncate max-w-[70px] mx-auto";
+          }
+        });
+      }, timeline);
+      demoTimeoutIds.push(idModalClose2);
+
+      timeline += 800;
+      // 4. Move cursor to "Ruaj Ndryshimet" button
+      moveCursor(780, 115, "Klikon 'Ruaj Ndryshimet'", timeline);
+
+      timeline += 600;
+      const idSaveFinal = setTimeout(() => {
+        const saveBtn = document.getElementById("smip-btn-save");
+        const saveBtnText = document.getElementById("save-btn-text");
+        const toast = document.getElementById("smip-toast");
+
+        if (saveBtn) saveBtn.className = "bg-emerald-800 text-white font-bold px-3.5 py-1.5 rounded flex items-center space-x-1 shadow transition";
+        if (saveBtnText) saveBtnText.innerText = "✓ U ruajtën!";
+        if (toast) toast.classList.remove("hidden");
+
+        const playText = document.getElementById("play-btn-text");
+        if (playText) playText.innerText = "✓ Përfundoi me Sukses!";
+        isRunning = false;
+      }, timeline);
+      demoTimeoutIds.push(idSaveFinal);
+    }
+
+    // Auto-trigger on viewport enter or window load
     window.addEventListener("DOMContentLoaded", () => {
-      runScenario("6-8");
+      setTimeout(() => {
+        startVisualDemo();
+      }, 1200);
     });
   </script>
 </body>

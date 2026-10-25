@@ -142,6 +142,22 @@ node scripts/smip_bot.js \
 
 ---
 
+## Parimi i Zgjidhjes Dinamike dhe Vetë-Riparimit (Self-Healing & Adaptive Fallback)
+
+> [!IMPORTANT]
+> **Rregull Thelbësor:** Agjenti është plotësisht **dinamik dhe vetë-riparues**. Nëse një komandë, selektor apo skedar nuk gjendet, agjenti **NUK ndalet** dhe **NUK i kërkon përdoruesit të rregullojë kodin**. Agjenti gjen vetë zgjidhjen me këtë hierarki:
+
+1. **Nëse ndryshon ndërfaqja e SMIP (Selektorët):**
+   * Nëse `#add-topic` apo `#react-select-...` ndryshojnë, agjenti kërkon me tekst (`button:has-text("Shto temë")`), me etiketa semantike (`label:has-text("Klasa")`), ose me struktura relative.
+2. **Nëse mungon plani mësimor:**
+   * Agjenti kërkon në `smip_docs/` $\rightarrow$ kërkon online te portalet e botuesve $\rightarrow$ nëse nuk shkarkohet dot, agjenti **gjeneron vetë temat zyrtare** bazuar në udhëzimet kurrikulare të MAS & ASCAP.
+3. **Nëse mungon kalendari i festave:**
+   * Agjenti nuk pret skedar: ekzekuton `holiday_finder.py`, i merr festat nga shërbimi zyrtar online ose i llogarit algoritmikisht dhe e vetë-krijon skedarin.
+4. **Nëse dështon lidhja me Chrome CDP:**
+   * Agjenti kalon automatikisht në sesionin Playwright me ruajtje cookies, ose hap dritaren headful që mësuesi të logohet.
+
+---
+
 ## Skedarët dhe Referencat Kryesore
 
 * Selektorët dhe ndërfaqja e SMIP: [`portal_selectors.md`](./references/portal_selectors.md)

@@ -101,18 +101,51 @@ function loadTopics(filePath, className) {
   return [];
 }
 
-async function selectReactDropdown(page, inputSelector, textValue) {
+async function selectReactDropdown(page, inputSelector, textValue, labelHint = '') {
   try {
-    const input = page.locator(inputSelector);
-    await input.waitFor({ state: 'attached', timeout: 5000 });
-    await input.click({ force: true });
-    await input.fill(textValue);
-    await page.waitForTimeout(400);
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(400);
+    // 1. Provo selektorin kryesor
+    let input = page.locator(inputSelector);
+    if (await input.count() > 0) {
+      await input.first().click({ force: true });
+      await input.first().fill(textValue);
+      await page.waitForTimeout(400);
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(400);
+      return true;
+    }
+
+    // 2. Fallback dinamik: Gjej sipas etiketës (label hint)
+    if (labelHint) {
+      console.log(`  * [Vetë-Riparim] Duke kërkuar fushën '${labelHint}' me strategji alternative...`);
+      const container = page.locator(`label:has-text("${labelHint}")`).locator('..').locator('input, [class*="-control"]');
+      if (await container.count() > 0) {
+        await container.first().click({ force: true });
+        await page.keyboard.type(textValue);
+        await page.waitForTimeout(400);
+        await page.keyboard.press('Enter');
+        await page.waitForTimeout(400);
+        return true;
+      }
+    }
+
+    // 3. Fallback me kërkim të dropdown-ve të dukshëm
+    const anyDropdown = page.locator('[class*="-control"]');
+    if (await anyDropdown.count() > 0) {
+      for (let i = 0; i < await anyDropdown.count(); i++) {
+        const dd = anyDropdown.nth(i);
+        const text = await dd.textContent();
+        if (text && (text.includes(textValue) || (labelHint && text.includes(labelHint)))) {
+          await dd.click();
+          await page.keyboard.type(textValue);
+          await page.keyboard.press('Enter');
+          return true;
+        }
+      }
+    }
   } catch (e) {
-    console.warn(`Vërejtje te dropdown ${inputSelector}:`, e.message);
+    console.warn(`Vërejtje te dropdown ${inputSelector} (${labelHint}):`, e.message);
   }
+  return false;
 }
 
 async function run() {
