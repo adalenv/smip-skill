@@ -1,0 +1,59 @@
+{
+  "pershkrimi": "Kalendari i festave zyrtare dhe pushimeve shkollore ne Shqiperi",
+  "viti_shkollor_2026_2027": {
+    "fillimi_shkolles": "2026-09-14",
+    "mbarimi_shkolles": "2027-06-18",
+    "festat_fikse": [
+      { "data": "2026-11-22", "emri": "Dita e Alfabetit", "pushimi": "2026-11-23", "shenim": "Bie te diel, shtyhet te henen" },
+      { "data": "2026-11-28", "emri": "Dita e Flamurit dhe Pavaresise", "pushimi": "2026-11-30", "shenim": "Bie te shtune, shtyhet te henen" },
+      { "data": "2026-11-29", "emri": "Dita e Clirimit", "pushimi": "2026-12-01", "shenim": "Bie te diel, shtyhet te marten" },
+      { "data": "2026-12-08", "emri": "Dita Kombetare e Rinise", "pushimi": "2026-12-08", "shenim": "E marte" },
+      { "data": "2027-03-14", "emri": "Dita e Veres", "pushimi": "2027-03-15", "shenim": "Bie te diel, shtyhet te henen" },
+      { "data": "2027-03-22", "emri": "Dita e Nevruzit", "pushimi": "2027-03-22", "shenim": "E hene" },
+      { "data": "2027-05-01", "emri": "Dita Nderkombetare e Punetoreve", "pushimi": "2027-05-03", "shenim": "Bie te shtune, shtyhet te henen" }
+    ],
+    "festat_e_ndryshueshme": [
+      {
+        "festa": "Fiter Bajrami (Bajrami i Madh)",
+        "data_kalendarike": "2027-03-09",
+        "dita_e_javes": "E Marte",
+        "dita_pushim": "2027-03-09"
+      },
+      {
+        "festa": "Pashket Katolike",
+        "data_kalendarike": "2027-03-28",
+        "dita_e_javes": "E Diel",
+        "dita_pushim": "2027-03-29",
+        "shenim": "Bie te Diel -> E Hena 29 Mars eshte pushim zyrtar"
+      },
+      {
+        "festa": "Pashket Ortodokse",
+        "data_kalendarike": "2027-05-02",
+        "dita_e_javes": "E Diel",
+        "dita_pushim": "2027-05-03",
+        "shenim": "Bie te Diel -> E Hena 3 Maj eshte pushim zyrtar"
+      },
+      {
+        "festa": "Kurban Bajrami",
+        "data_kalendarike": "2027-05-16",
+        "dita_e_javes": "E Diel",
+        "dita_pushim": "2027-05-17",
+        "shenim": "Bie te Diel -> E Hena 17 Maj eshte pushim zyrtar"
+      }
+    ],
+    "pushimet_shkollore_mas": [
+      {
+        "emri": "Pushimet e Dimrit (Fundvitit)",
+        "fillimi": "2026-12-24",
+        "mbarimi": "2027-01-04",
+        "rifillimi_mesimit": "2027-01-05"
+      },
+      {
+        "emri": "Pushimet e Pranveres (Klasat 1-9)",
+        "fillimi": "2027-03-29",
+        "mbarimi": "2027-04-02",
+        "rifillimi_mesimit": "2027-04-05"
+      }
+    ]
+  }
+}

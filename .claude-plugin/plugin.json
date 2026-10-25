@@ -1,0 +1,6 @@
+{
+  "name": "smip-skill",
+  "version": "1.0.0",
+  "description": "SMIP (smip.al) Albanian teacher portal automation & curriculum assistant",
+  "entrypoint": "skills/smip/SKILL.md"
+}

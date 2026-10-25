@@ -1,0 +1,25 @@
+# Skedarët realë dhe personalë (Kurrë mos ngarko në Git)
+smip_docs/
+*.docx
+*.pdf
+KONTEKSTI_SMIP.md
+orari_mesimor.json
+temat_*.json
+temat_*.md
+*teacher_context*
+*orari_mesimor*
+
+# Sesioni lokal dhe fotot
+.smip_session/
+*.png
+*.jpg
+*.jpeg
+inject_smip.js
+
+# Paketat dhe sistemi
+node_modules/
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+.env

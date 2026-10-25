@@ -1,0 +1,15 @@
+name: smip-skill
+version: 1.0.0
+description: Menaxhimi dhe automatizimi i plotë i portalit SMIP (smip.al) për mësuesit në Shqipëri.
+author: Adalenv
+license: MIT
+homepage: https://adalenv.github.io/smip-skill/
+repository: https://github.com/adalenv/smip-skill
+
+provides_skills:
+  - smip
+
+provides_commands:
+  - smip-plan
+  - smip-import
+  - smip-search

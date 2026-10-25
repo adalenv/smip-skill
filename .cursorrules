@@ -1,0 +1,7 @@
+# SMIP Skill for Cursor
+Kur përdoruesi kërkon ndihmë me regjistrin e SMIP (smip.al), planet mësimore ose hedhjen e temave ditore:
+1. Pyet për Klasën, Lëndën, Shtëpinë Botuese dhe Muajin.
+2. Gjej planin në `smip_docs/` me `python3 scripts/find_curriculum.py`.
+3. Përputh temat me orarin dhe kalendarin e pushimeve me `python3 scripts/parse_plan.py`.
+4. Shfaq pasqyrën tabelare për konfirmim.
+5. Insero temat në portal me `python3 scripts/smip_importer.py`.

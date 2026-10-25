@@ -1,0 +1,11 @@
+---
+description: SMIP (smip.al) Portal Curriculum & Topic Automation
+globs: **/*smip*.*
+---
+# SMIP Automation Rule
+
+Kur punoni me SMIP:
+- Kontrolloni gjithmonë kalendarin e pushimeve te `kalendari_pushimeve.json`.
+- Përdorni selektorët zyrtarë të dokumentuar te `SMIP_RESEARCH.md`.
+- Respektoni rregullin e 24 orëve për regjistrimin e temave dhe notave.
+- Përdorni skriptet te `scripts/`: `find_curriculum.py`, `parse_plan.py`, dhe `smip_importer.py`.

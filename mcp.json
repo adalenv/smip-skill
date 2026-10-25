@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "smip": {
+      "command": "node",
+      "args": ["scripts/smip_mcp.js"],
+      "description": "SMIP Portal Automation & Curriculum Toolset for AI Agents"
+    }
+  }
+}

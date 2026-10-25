@@ -1,0 +1,29 @@
+{
+  "name": "smip-skill",
+  "version": "1.0.0",
+  "description": "AI Agent Skill & Autonomous Browser Bot for the Albanian SMIP (smip.al) Teacher Portal",
+  "main": "scripts/smip_bot.js",
+  "bin": {
+    "smip-bot": "./scripts/smip_bot.js",
+    "smip-mcp": "./scripts/smip_mcp.js"
+  },
+  "scripts": {
+    "start": "node scripts/smip_bot.js",
+    "bot": "node scripts/smip_bot.js",
+    "mcp": "node scripts/smip_mcp.js"
+  },
+  "keywords": [
+    "smip",
+    "agent-skills",
+    "albania",
+    "ai-agents",
+    "playwright",
+    "browser-automation"
+  ],
+  "author": "Adalenv",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "playwright": "^1.64.1"
+  }
+}

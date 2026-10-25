@@ -1,0 +1,25 @@
+{
+  "shembull_orari": {
+    "ngarkesa_javore_ore": 17,
+    "lendet_dhe_klasat": [
+      {
+        "klasa": "Klasa 6 - 8",
+        "lenda": "Edukim Fizik",
+        "oret_javore": 3,
+        "ditet": {
+          "E Hënë": 2,
+          "E Premte": 1
+        }
+      },
+      {
+        "klasa": "Klasa 3",
+        "lenda": "Anglisht",
+        "oret_javore": 3,
+        "ditet": {
+          "E Mërkurë": 2,
+          "E Premte": 1
+        }
+      }
+    ]
+  }
+}
