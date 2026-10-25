@@ -72,8 +72,9 @@
 
       <div class="flex items-center space-x-5 text-sm font-medium">
         <a href="#chrome-demo" class="text-slate-300 hover:text-white transition">Pamja në Chrome</a>
-        <a href="#self-healing" class="text-slate-300 hover:text-white transition">Vetë-Riparimi Dinamik</a>
-        <a href="#agents" class="text-slate-300 hover:text-white transition">Agjentët e Mbështetur</a>
+        <a href="#installation" class="text-slate-300 hover:text-white transition">Instalimi</a>
+        <a href="#self-healing" class="text-slate-300 hover:text-white transition">Vetë-Riparimi</a>
+        <a href="#agents" class="text-slate-300 hover:text-white transition">Agjentët</a>
         <a href="https://github.com/adalenv/smip-skill" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-lg shadow-blue-600/20">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
           <span>GitHub Repo</span>
@@ -95,9 +96,21 @@
           Hedhja Autonome e Temave në <span class="bg-gradient-to-r from-blue-400 via-sky-300 to-teal-300 bg-clip-text text-transparent">SMIP.AL</span>
         </h1>
 
-        <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+        <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-6 font-normal leading-relaxed">
           Agjenti lidhet direkt me Google Chrome-in tuaj ekzistues (CDP), gjen planin mësimor, llogarit pushimet zyrtare të MAS dhe plotëson regjistrin ditor të shkollës në sekonda.
         </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
+          <a href="#chrome-demo" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-blue-600/30 flex items-center space-x-2">
+            <span>▶</span>
+            <span>Shiko Demonstrimin Live</span>
+          </a>
+          <a href="#installation" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs transition flex items-center space-x-2">
+            <span>📦</span>
+            <span>Udhëzuesi i Instalimit</span>
+          </a>
+        </div>
 
         <!-- Dynamic Self-Healing Callout -->
         <div class="inline-flex flex-wrap items-center justify-center gap-2 text-xs bg-slate-900/90 border border-slate-800 p-2 rounded-xl text-slate-300">
@@ -327,7 +340,195 @@
       </div>
     </section>
 
-    <!-- Self-Healing & Adaptive Fallback Section (Dinamizmi) -->
+    <!-- Installation & Setup Guide Section -->
+    <section id="installation" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 border-t border-slate-800/80">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-3">
+          <span>📦 Instalimi & Konfigurimi</span>
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Si ta Instaloni në Agjentin Tuaj</h2>
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+          Zgjidhni mjedisin ose agjentin tuaj të preferuar për të integruar menjëherë aftësitë e automatizimit të portalit SMIP.
+        </p>
+      </div>
+
+      <!-- Installation Tabs Selector -->
+      <div class="flex flex-wrap items-center justify-center gap-2 mb-8">
+        <button onclick="switchInstallTab('antigravity')" id="install-tab-btn-antigravity" class="px-4 py-2.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow flex items-center space-x-2">
+          <span>🚀</span>
+          <span>Google Antigravity</span>
+        </button>
+        <button onclick="switchInstallTab('claude')" id="install-tab-btn-claude" class="px-4 py-2.5 rounded-lg text-xs font-semibold transition bg-slate-900/90 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 flex items-center space-x-2">
+          <span>🟣</span>
+          <span>Claude Code (MCP)</span>
+        </button>
+        <button onclick="switchInstallTab('cursor')" id="install-tab-btn-cursor" class="px-4 py-2.5 rounded-lg text-xs font-semibold transition bg-slate-900/90 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 flex items-center space-x-2">
+          <span>⚡</span>
+          <span>Cursor & Windsurf</span>
+        </button>
+        <button onclick="switchInstallTab('cli')" id="install-tab-btn-cli" class="px-4 py-2.5 rounded-lg text-xs font-semibold transition bg-slate-900/90 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 flex items-center space-x-2">
+          <span>💻</span>
+          <span>Terminal / Chrome CDP</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto shadow-2xl">
+        
+        <!-- Panel 1: Google Antigravity -->
+        <div id="install-panel-antigravity" class="space-y-6">
+          <div class="flex items-start justify-between flex-wrap gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <span>Google Antigravity Native Skill</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Rekomanduar</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Shtoni aftësinë direkt në dosjen e konfigurimit të agjentit për integrim me Google Chrome dhe mjetin <code class="text-emerald-400 font-mono">/browser</code>.</p>
+            </div>
+            <span class="text-xs font-mono text-slate-500 bg-slate-800/80 px-2.5 py-1 rounded">.agents/skills/smip</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Mënyra A: Klonoje direkt në workspace-in e projektit tuaj</span>
+              <button onclick="copyCode(this, 'git clone https://github.com/adalenv/smip-skill.git .agents/skills/smip')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-emerald-400 overflow-x-auto border border-slate-800/90"><code>git clone https://github.com/adalenv/smip-skill.git .agents/skills/smip</code></pre>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Mënyra B: Ose instaloje globalisht për të gjitha bisedat tuaja me Antigravity</span>
+              <button onclick="copyCode(this, 'mkdir -p ~/.gemini/config/skills/smip && git clone https://github.com/adalenv/smip-skill.git ~/.gemini/config/skills/smip')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-blue-300 overflow-x-auto border border-slate-800/90"><code>mkdir -p ~/.gemini/config/skills/smip
+git clone https://github.com/adalenv/smip-skill.git ~/.gemini/config/skills/smip</code></pre>
+          </div>
+
+          <div class="bg-blue-950/40 border border-blue-800/40 p-4 rounded-xl text-xs text-slate-300">
+            <div class="font-bold text-white mb-1 flex items-center space-x-1.5">
+              <span>💬</span><span>Shembull Pyetjeje në Chat me Antigravity:</span>
+            </div>
+            <p class="text-blue-200 italic font-sans">"Më ndihmo të hedh temat e Tetorit 2026 për Klasën 6 në Edukim Fizik në portalin SMIP."</p>
+          </div>
+        </div>
+
+        <!-- Panel 2: Claude Code -->
+        <div id="install-panel-claude" class="space-y-6 hidden">
+          <div class="flex items-start justify-between flex-wrap gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <span>Claude Code (Anthropic MCP)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30">Model Context Protocol</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Lidheni serverin MCP të SMIP me Claude Code për të kërkuar kurrikulën dhe ekzekutuar automatizimin.</p>
+            </div>
+            <span class="text-xs font-mono text-slate-500 bg-slate-800/80 px-2.5 py-1 rounded">scripts/smip_mcp.js</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Shto serverin MCP në Claude me 1 komandë:</span>
+              <button onclick="copyCode(this, 'claude mcp add smip node ./scripts/smip_mcp.js')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-purple-300 overflow-x-auto border border-slate-800/90"><code>claude mcp add smip node ./scripts/smip_mcp.js</code></pre>
+          </div>
+
+          <div class="bg-purple-950/30 border border-purple-800/40 p-4 rounded-xl text-xs text-slate-300">
+            <div class="font-bold text-white mb-2">Veglat e Integruara të SMIP (MCP Tools):</div>
+            <ul class="list-disc list-inside space-y-1.5 text-slate-300 font-mono text-[11px]">
+              <li><code class="text-purple-300 bg-purple-950/60 px-1.5 py-0.5 rounded">smip_search_curriculum</code>: Kërkon temat e botuesve ose planet lokale</li>
+              <li><code class="text-purple-300 bg-purple-950/60 px-1.5 py-0.5 rounded">smip_prepare_topics</code>: Përputh temat me orarin dhe festat zyrtare</li>
+              <li><code class="text-purple-300 bg-purple-950/60 px-1.5 py-0.5 rounded">smip_insert_to_portal</code>: Inseron temat në mënyrë autonome në SMIP</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Panel 3: Cursor & Windsurf -->
+        <div id="install-panel-cursor" class="space-y-6 hidden">
+          <div class="flex items-start justify-between flex-wrap gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <span>Cursor & Windsurf IDE</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30">Zero Config</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Repo përmban rregullat e gatshme <code class="text-sky-300">.cursorrules</code> dhe konfigurimin <code class="text-sky-300">.cursor/mcp.json</code>.</p>
+            </div>
+            <span class="text-xs font-mono text-slate-500 bg-slate-800/80 px-2.5 py-1 rounded">.cursorrules</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Hapi 1: Klono repozitorin dhe instalo paketat</span>
+              <button onclick="copyCode(this, 'git clone https://github.com/adalenv/smip-skill.git && cd smip-skill && npm install')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-sky-300 overflow-x-auto border border-slate-800/90"><code>git clone https://github.com/adalenv/smip-skill.git
+cd smip-skill && npm install</code></pre>
+          </div>
+
+          <div class="space-y-2 text-xs text-slate-400">
+            <p>Hapi 2: Hapni dosjen në Cursor ose Windsurf:</p>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-slate-300 border border-slate-800/90"><code>cursor . # Ose hapeni nga menyja File -> Open Folder</code></pre>
+            <p class="text-[11px] text-slate-500">Agjenti i Cursor-it / Windsurf-it i njeh automatikisht udhëzimet dhe veglat e SMIP-it.</p>
+          </div>
+        </div>
+
+        <!-- Panel 4: CLI & Chrome CDP -->
+        <div id="install-panel-cli" class="space-y-6 hidden">
+          <div class="flex items-start justify-between flex-wrap gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <span>Terminal CLI & Google Chrome CDP</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30">Pa Kërkuar Ri-Logim</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Lidhu drejtpërdrejt me tab-in tënd aktiv të <code class="text-amber-300">smip.al</code> në Google Chrome përmes portës CDP.</p>
+            </div>
+            <span class="text-xs font-mono text-slate-500 bg-slate-800/80 px-2.5 py-1 rounded">Chrome CDP</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Hapi 1: Instalo varësitë e Python dhe Playwright</span>
+              <button onclick="copyCode(this, 'npm install && pip install python-docx requests')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800/90"><code>npm install && pip install python-docx requests</code></pre>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <span>Hapi 2: Ekzekuto botin autonom që lidhet me Google Chrome</span>
+              <button onclick="copyCode(this, 'node scripts/smip_bot.js --open-chrome --topics &quot;temat_tetor_2026.json&quot; --class &quot;Klasa 6 - 8&quot; --subject &quot;Edukim Fizik&quot; --month &quot;10/2026&quot;')" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition">
+                <span>📋</span><span>Kopjo</span>
+              </button>
+            </div>
+            <pre class="bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-amber-300 overflow-x-auto border border-slate-800/90"><code>node scripts/smip_bot.js \
+  --open-chrome \
+  --topics "temat_tetor_2026.json" \
+  --class "Klasa 6 - 8" \
+  --subject "Edukim Fizik" \
+  --month "10/2026"</code></pre>
+          </div>
+
+          <div class="bg-amber-950/30 border border-amber-800/40 p-4 rounded-xl text-xs text-slate-300">
+            <div class="font-bold text-white mb-1 flex items-center space-x-1.5">
+              <span>💡</span><span>Avantazhi Kryesor:</span>
+            </div>
+            <p class="text-slate-400">Nëse jeni të kyçur në SMIP përmes e-Albania në Chrome-in tuaj personal, agjenti bashkëngjitet në atë dritare aktive, pa pasur nevojë të vendosni kredenciale ose të ri-kyçeni.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
     <section id="self-healing" class="py-16 max-w-7xl mx-auto px-4 sm:px-6">
       <div class="text-center mb-12">
         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
@@ -841,6 +1042,51 @@
         isRunning = false;
       }, timeline);
       demoTimeoutIds.push(idSaveFinal);
+    }
+
+    // Installation Tabs Switcher
+    function switchInstallTab(tabId) {
+      const tabs = ["antigravity", "claude", "cursor", "cli"];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`install-tab-btn-${t}`);
+        const panel = document.getElementById(`install-panel-${t}`);
+        if (!btn || !panel) return;
+        if (t === tabId) {
+          btn.className = "px-4 py-2.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow flex items-center space-x-2";
+          panel.classList.remove("hidden");
+        } else {
+          btn.className = "px-4 py-2.5 rounded-lg text-xs font-semibold transition bg-slate-900/90 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 flex items-center space-x-2";
+          panel.classList.add("hidden");
+        }
+      });
+    }
+
+    // Copy to Clipboard Utility with visual feedback & fallback
+    function copyCode(btn, text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text);
+        } else {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        }
+      } catch (e) {
+        console.warn("Copy fallback error", e);
+      }
+
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = "<span>✓</span><span>U kopjua!</span>";
+      btn.className = "text-[11px] text-emerald-300 font-bold flex items-center space-x-1 bg-emerald-900/80 px-2.5 py-1 rounded transition border border-emerald-500/30";
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.className = "text-[11px] text-blue-400 hover:text-blue-300 flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition";
+      }, 2000);
     }
 
     // Auto-trigger on viewport enter or window load
