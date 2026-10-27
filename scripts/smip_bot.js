@@ -291,7 +291,13 @@ async function run() {
 
       // Plotëso datën në modal
       const dateInput = page.locator('#date').or(page.locator('input[name="date"]'));
-      await dateInput.first().fill(dataStr);
+      try {
+        const inputType = await dateInput.first().getAttribute('type');
+        const fillDate = inputType === 'date' ? (item.data_iso || dataStr) : dataStr;
+        await dateInput.first().fill(fillDate);
+      } catch (e) {
+        await dateInput.first().fill(dataStr);
+      }
       await dateInput.first().dispatchEvent('change');
 
       // Plotëso titullin e temës në modal
