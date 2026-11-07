@@ -23,3 +23,12 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+
+screenshots/
+*.png
+
+# Te dhenat e nxenesve (Privatesi)
+nxenesit_*.json
+nxenesit_*.md
+notat_*
+raw_grades_*

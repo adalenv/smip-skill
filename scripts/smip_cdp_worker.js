@@ -233,11 +233,35 @@ async function start() {
         return res.end(JSON.stringify({ status: 'ok', inserted: results.length, results }));
       }
 
-      if (req.method === 'GET' && req.url === '/screenshot') {
+      if (req.url.startsWith('/screenshot')) {
         await page.bringToFront();
-        const screenshotPath = 'smip_cdp_live.png';
-        await page.screenshot({ path: screenshotPath, fullPage: true });
-        return res.end(JSON.stringify({ status: 'ok', file: screenshotPath }));
+        let selector = null;
+        let filePath = 'smip_cdp_live.png';
+        let fullPage = true;
+
+        if (req.method === 'POST') {
+          const body = await readBody();
+          if (body.selector !== undefined) selector = body.selector;
+          if (body.filePath) filePath = body.filePath;
+          if (body.fullPage !== undefined) fullPage = !!body.fullPage;
+        } else {
+          const urlObj = new URL(req.url, 'http://127.0.0.1:8321');
+          if (urlObj.searchParams.get('selector')) selector = urlObj.searchParams.get('selector');
+          if (urlObj.searchParams.get('fullPage')) fullPage = urlObj.searchParams.get('fullPage') === 'true';
+        }
+
+        if (selector) {
+          const target = page.locator(selector).first();
+          if (await target.count() > 0) {
+            await target.screenshot({ path: filePath });
+          } else {
+            await page.screenshot({ path: filePath, fullPage: true });
+          }
+        } else {
+          // Full page screenshot
+          await page.screenshot({ path: filePath, fullPage: true });
+        }
+        return res.end(JSON.stringify({ status: 'ok', file: filePath }));
       }
 
       res.statusCode = 404;
