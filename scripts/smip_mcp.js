@@ -14,7 +14,7 @@ const fs = require('fs');
 const server = new Server(
   {
     name: 'smip-skill-mcp',
-    version: '1.0.0'
+    version: '1.1.0'
   },
   {
     capabilities: {
@@ -73,6 +73,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             dry_run: { type: 'boolean', default: false, description: 'Vetëm simulo pa klikuar Ruaj Ndryshimet' }
           }
         }
+      },
+      {
+        name: 'smip_add_grades',
+        description: 'Vendos dhe ruan automatikisht notat e nxënësve në regjistrin e periudhës (tab=trimester-register) në SMIP.',
+        inputSchema: {
+          type: 'object',
+          required: ['class_name', 'subject_keyword', 'grades_file'],
+          properties: {
+            class_name: { type: 'string', description: 'Emri i klasës (p.sh. "6-A", "7-A", "11-A")' },
+            subject_keyword: { type: 'string', description: 'Fjalë kyçe e lëndës (p.sh. "edukim", "angleze")' },
+            period: { type: 'string', default: 'parë', description: 'Periudha: "parë", "dytë", "tretë"' },
+            grades_file: { type: 'string', description: 'Rruga e skedarit JSON me notat: [{"name": "Emër", "grade": 8, "datePattern": "16/10"}]' },
+            dry_run: { type: 'boolean', default: false, description: 'Simulo pa klikuar butonin Ruaj Ndryshimet' }
+          }
+        }
       }
     ]
   };
@@ -114,6 +129,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       let cmd = `node "${botPath}" --topics "${args.topics_file}" --class "${args.class_name}" --subject "${args.subject_name}" --month "${args.month}"`;
       if (args.use_chrome_cdp) cmd += ' --cdp 9222';
       if (args.headful) cmd += ' --headful';
+      if (args.dry_run) cmd += ' --dry-run';
+
+      const output = execSync(cmd, { cwd: ROOT_DIR, encoding: 'utf-8' });
+      return { content: [{ type: 'text', text: output }] };
+    }
+
+    if (name === 'smip_add_grades') {
+      const gradeScript = path.join(ROOT_DIR, 'scripts', 'manage_grades.js');
+      let cmd = `node "${gradeScript}" --class "${args.class_name}" --subject "${args.subject_keyword}" --grades-file "${args.grades_file}" --period "${args.period || 'parë'}"`;
       if (args.dry_run) cmd += ' --dry-run';
 
       const output = execSync(cmd, { cwd: ROOT_DIR, encoding: 'utf-8' });

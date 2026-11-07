@@ -4,165 +4,155 @@ description: >-
   Menaxhimi dhe automatizimi i plotë i portalit SMIP (smip.al) për mësuesit në Shqipëri.
   Pyet përdoruesin për klasën, lëndën dhe shtëpinë botuese, gjen ose shkarkon planet mësimore
   (Word/PDF), analizon dhe përputh temat me orarin dhe kalendarin e pushimeve zyrtare,
-  menaxhon klasat kolektive, dhe i inseron automatikisht në regjistrin e SMIP sapo koordinatori
-  hap regjistrin. Përdoreni këtë skill sa herë që përdoruesi kërkon ndihmë me SMIP, hedhjen e temave
-  ditore, regjistrin mësimor, planet e shtëpive botuese, ose vlerësimet dhe mungesat.
+  menaxhon klasat kolektive, hedh temat sapo koordinatori hap regjistrin, si dhe automatizon
+  plotësimin e notave dhe vlerësimeve në regjistrin e periudhës duke zbatuar rregullat e
+  arsimit parauniversitar (vlerësim në rresht, data të shpërndara, përputhje me temat dhe historikun e vitit të kaluar).
 metadata:
   icon: school
 ---
 
-# SMIP Skill - Automatizimi i Regjistrit Mësimor Parauniversitar
+# SMIP Skill - Automatizimi i Regjistrit dhe Vlerësimit Parauniversitar
 
-Ky skill ofron një rrjedhë të plotë nga marrja e të dhënave të mësuesit deri te regjistrimi përfundimtar i temave në portalin zyrtar [smip.al](https://smip.al/teacher/registry?tab=daily-register).
+Ky skill ofron automatizim të plotë, të sigurt dhe të saktë për mësuesit në portalin zyrtar [smip.al](https://smip.al):
+1. **Hedhja e Temave Ditore:** Analizimi i planeve vjetore, llogaritja e datave me festat zyrtare dhe inserimi në regjistër (`tab=daily-register`).
+2. **Hedhja dhe Menaxhimi i Notave:** Nxjerrja e historikut nga vitet paraprake, vendosja e notave në regjistrin e periudhës (`tab=trimester-register`), dhe zbatimi i rregullave të kurrikulës me kompetenca.
 
 ---
 
-## Rrjedha e Punës (Workflow me 5 Hapa)
+## Rrjedha A: Hedhja e Temave Mësimore (5 Hapa)
 
 ```mermaid
 flowchart TD
     A["Hapi 1: Pyet Mësuesin<br/>(Klasa, Lënda, Botuesi, Muaji)"] --> B["Hapi 2: Gjetja / Shkarkimi i Planit<br/>(smip_docs / Portale Botuesish)"]
-    B --> C["Hapi 3: Përputhja e Temave<br/>(parse_plan.py + Pushimet Zyrtare)"]
+    B --> C["Hapi 3: Përputhja e Temave<br/>(parse_plan.py + Kalendari i Festave)"]
     C --> D["Hapi 4: Rishikimi & Konfirmimi<br/>(Pasqyra Tabelare Markdown)"]
     D --> E["Hapi 5: Inserimi në SMIP<br/>(Sesion Persistent CDP në Chrome)"]
 ```
 
----
+### 1. Mbledhja e të Dhënave
+Pyeteni mësuesin duke përdorur `ask_question` ose dialog interaktiv për:
+* Klasën (p.sh. *6-A*, *7-A*, ose klasë kolektive e bashkuar *7 & 9*)
+* Lëndën (p.sh. *Edukim fizik*, *Gjuhë angleze*, *Matematikë*)
+* Shtëpinë botuese (p.sh. *Albas*, *Mediaprint*, *Pegi*, *ASCAP/MAS*)
+* Muajin dhe orarin javor (ditët e javës dhe orët për ditë)
 
-## Hapi 1: Mbledhja Interaktive e të Dhënave
+### 2. Gjetja ose Shkarkimi i Planit
+* Kërkim lokal në `smip_docs/` me `find_curriculum.py`.
+* Shkarkim automatik nga portalet zyrtare (*Portalishkollor*, *Mediaprint*, *Pegi*, *ASCAP*).
+* Në mungesë, agjenti gjeneron temat zyrtare bazuar në kurrikulën e MAS.
 
-Kur përdoruesi dëshiron të hedhë tema në SMIP, nëse nuk janë specifikuar të gjitha të dhënat, pyeteni mësuesin duke përdorur mjetin `ask_question` ose dialog interaktiv për këto elemente kyçe:
-
-1. **Klasa:** (p.sh. *Klasa 7-A*, *Klasa 9-A*, ose klasë kolektive e bashkuar si *Klasa 7 & 9*)
-2. **Lënda:** (p.sh. *Edukim fizik, sporte dhe shëndeti*, *Anglisht*, *Matematikë*, *TIK*)
-3. **Shtëpia Botuese / Teksti:** (p.sh. *Albas*, *Mediaprint*, *Pegi*, *ASCAP/MAS*, etj.)
-4. **Muaji dhe Viti:** (p.sh. *Tetor 2026*, *Nëntor 2026*, etj.)
-5. **Orari Javor:** (Ditët e javës dhe numri i orëve për ditë).
-
----
-
-## Hapi 2: Gjetja ose Shkarkimi i Planit Mësimor
-
-Përdorni skriptin ndihmës [`find_curriculum.py`](./scripts/find_curriculum.py) për të kontrolluar planet lokale ose për të shkarkuar nga burimet zyrtare:
-
-```bash
-# Kërkim lokal në smip_docs/
-python3 .agents/skills/smip/scripts/find_curriculum.py --grade "<klasa>" --subject "<lenda>" --publisher "<botuesi>"
-```
-
-### Nëse plani nuk gjendet lokal:
-* Përdorni veglën `search_web` ose burimet e integruara të shtëpive botuese:
-  * **Albas:** `https://portalishkollor.al`
-  * **Mediaprint:** `https://mediaprint.al/planet-mesimore/`
-  * **Pegi:** `https://botimepegi.al/plane-mesimore/`
-  * **Irisoft:** `https://irisoft.al`
-  * **ASCAP:** `https://ascap.edu.al`
-* Shkarkojeni skedarin Word/PDF direkt me:
-  ```bash
-  python3 .agents/skills/smip/scripts/find_curriculum.py --download-url "<URL>" --output-name "<emri_skedarit.docx>"
-  ```
-
----
-
-## Hapi 3: Analiza dhe Përgatitja e Temave Ditore
-
-Përdorni skriptin [`parse_plan.py`](./scripts/parse_plan.py) për të:
-1. Nxjerrë të gjitha temat mësimore dhe situatat e parashikuara të të nxënit nga skedari `.docx`.
-2. Llogaritur datat e sakta të orëve duke përjashtuar fundjavat dhe festat zyrtare. Nëse kalendari nuk ekziston, motori [`holiday_finder.py`](./scripts/holiday_finder.py) i gjen automatikisht festat zyrtare online ose i llogarit algoritmikisht sipas ligjit shqiptar dhe e ruan vetë skedarin në `smip_docs/kalendari_pushimeve.json`.
-3. Përcaktuar numrin rendor të orës fillestare (`--start-index`) nëse muaji paraprak ka konsumuar një pjesë të temave.
-
+### 3. Përputhja e Temave me Kalendarin
+Përdorni `parse_plan.py` bashkë me `holiday_finder.py` për të përjashtuar automatikisht festat zyrtare dhe fundjavat:
 ```bash
 python3 .agents/skills/smip/scripts/parse_plan.py \
-  --file "smip_docs/<skedari_planit.docx>" \
+  --file "smip_docs/<plani.docx>" \
   --grade "<klasa>" \
   --subject "<lenda>" \
-  --month <muaji_numerik> \
+  --month <muaji> \
   --year <viti> \
-  --days '<json_ditet_dhe_oret>' \
-  --start-index <indeksi_i_temes_se_ardhshme> \
+  --days '{"E Mërkurë": 2, "E Premte": 1}' \
+  --start-index <ora_fillestare> \
   --output-json "temat_<muaji>_<viti>.json" \
   --output-md "temat_<muaji>_<viti>.md"
 ```
 
-*Shembull:*
-```bash
-python3 .agents/skills/smip/scripts/parse_plan.py \
-  --file "smip_docs/EDUKIM_FIZIK_7_Plani_me_simor_vjetor.docx" \
-  --grade "Klasa 7 - 9" \
-  --subject "Edukim Fizik" \
-  --month 10 \
-  --year 2026 \
-  --days '{"E Mërkurë": 2, "E Premte": 1}' \
-  --start-index 9 \
-  --output-json "temat_tetor_2026.json" \
-  --output-md "temat_tetor_2026.md"
+### 4. Lejet e Koordinatorit (`can_change`)
+* Nëse koordinatori nuk e ka hapur ende regjistrin për atë muaj, butoni `#add-topic` është i fshehur (`can_change: false`).
+* Agjenti i ruan temat në skedarë gati dhe pret hapjen e regjistrit për t'i inseruar menjëherë.
+
+---
+
+## Rrjedha B: Hedhja dhe Menaxhimi i Notave (`tab=trimester-register`)
+
+```mermaid
+flowchart TD
+    G1["Hapi 1: Nxjerrja e Historikut<br/>(Notat e Vitit të Kaluar)"] --> G2["Hapi 2: Zgjedhja e Datave me Tema<br/>(Verifikim 100% që data ka orë)"]
+    G2 --> G3["Hapi 3: Përcaktimi i Metodës<br/>(Edukim Fizik në Rresht vs Gjuhë/Të tjera Random)"]
+    G3 --> G4["Hapi 4: Vendosja e Notave në Modal<br/>(gradeBtn.click + Radio Vazhdueshëm)"]
+    G4 --> G5["Hapi 5: Ruajtja me Bulk Save<br/>(Kliko #bulk-save-grades & Konfirmo)"]
 ```
 
----
-
-## Hapi 4: Rishikimi dhe Konfirmimi nga Mësuesi
-
-Përpara inserimit në sistemin SMIP, paraqisni gjithmonë para mësuesit pasqyrën tabelare:
-* Numri i orës vjetore
-* Data e zhvillimit
-* Dita e javës
-* Titulli i temës mësimore
-* Situata e të nxënit
-
----
-
-## Hapi 5: Inserimi në SMIP (Lidhja me Google Chrome mbi CDP)
-
-### Menaxhimi i Lidhjes me Chrome (Sesion i Përhershëm pa Prompt-e)
-Për të mos e pyetur përdoruesin çdo herë në Chrome me dialogun e "Remote debugging":
-1. Agjenti lexon rrugën e saktë të WebSocket-it direkt nga:
-   `/Users/<user>/Library/Application Support/Google/Chrome/DevToolsActivePort`
-2. Nis një worker daemon në prapaskenë (`scripts/smip_cdp_worker.js`) që mban lidhjen të hapur **pandërprerë** në portën lokale `8321`.
-3. Të gjitha veprimet (selektimi, klikimet, verifikimi, screenshot) kryhen përmes këtij kanali të hapur pa shkëputje.
+### Rregullat Kryesore Pedagogjike dhe Ligjore të Vlerësimit:
+1. **Arsimi Fillor (Klasat 1-A, 2-A, 3-A):**
+   * **NUK marrin nota numerike ditore (4-10)** në SMIP.
+   * Vlerësimi bëhet vetëm me nivele arritjeje cilësore në fund të periudhës. Mos tentoni të vendosni nota ditore numerike për këto klasa.
+2. **Edukim Fizik:**
+   * Notat vendosen **në rresht** (`rrjesht`) — të gjithë nxënësit e klasës vlerësohen në të njëjtën datë mësimore (test fizik / normë sportive).
+   * **Data të ndara:** Klasat nuk duhet të ndajnë të njëjtën datë (çdo klasë vlerësohet në datën e saj të orarit).
+3. **Gjuhë Angleze dhe Lëndët e Tjera:**
+   * Notat shpërndahen në **data të rastësishme** përgjatë muajve (për të pasqyruar aktivizimin individual dhe përgjigjet me gojë).
+4. **Përputhshmëria e Datës:**
+   * Çdo datë ku vendoset notë **DUHET** të ketë domosdoshmërisht temë mësimore të zhvilluar në regjistrin e SMIP.
+5. **Përputhshmëria me Vitin e Kaluar:**
+   * Kur plotësohet regjistri i ri me nota fillestare, ruhet e njëjta notë që nxënësi ka pasur vitin e kaluar në të njëjtën lëndë.
 
 ---
 
-## Rregulla Kritike të Funksionimit të SMIP
+## Procedura Teknike e Inserimit në React (`tab=trimester-register`)
 
-### 1. Lejet e Koordinatorit dhe Statusi i Regjistrit (`can_change`)
-* Në portalin SMIP, para se një mësues të mund të hedhë tema ditore, **koordinatori i shkollës / administratori** duhet të hapë regjistrin për modifikim dhe të konfirmojë ngarkesën mësimore për atë muaj/periudhë.
-* Nëse regjistri **nuk është hapur ende nga koordinatori**, butoni `#add-topic` ("Shto temë") qëndron i fshehur (`can_change: false`).
-* **Sjellja e agjentit:** Agjenti përgatit temat lokalisht në skedarët `temat_<muaji>_<viti>.json` dhe `.md`, mban gati lidhjen me Chrome, dhe pret konfirmimin ose hapjen nga koordinatori për t'i hedhur me një klikim të vetëm.
+### 1. Përzgjedhja Kaskadë e Filtrave (E Detyrueshme)
+1. **Klasa e bashkuar:** Zgjidhni `"Jo"`.
+2. **Klasa:** Zgjidhni klasën (p.sh. `"7-A"`), prisni 600-800ms.
+3. **Lënda:** Zgjidhni lëndën (p.sh. `"Edukim fizik..."`), prisni 600-800ms.
+4. **Periudha:** 
+   > [!IMPORTANT]
+   > Dropdown-i i Periudhës nuk ekziston në DOM derisa të zgjidhet Lënda. Pasi të zgjidhet lënda, klikoni kontrollin që përmban tekstin `"periudhën"` ose `"Periudha"` dhe zgjidhni `"Periudha e parë"`. Prisni 1200ms që tabela e nxënësve të ngarkohet plotësisht.
 
-### 2. Klasat Kolektive (Të Bashkuara, p.sh. 7-A & 9-A)
-* Në shkollat me klasa të bashkuara, nxënësit ndahen në paralele përkatëse në sistem (p.sh. 7-A dhe 9-A), ndërsa mësimi zhvillohet njëkohësisht.
-* Agjenti sigurohet që të përgatisë temat sipas orarit të unifikuar dhe t'i pasqyrojë në të dyja klasat përkatëse kur regjistri është i hapur.
+### 2. Modali i Notës dhe Klikimi Rezistent
+Për çdo nxënës në rreshtin përkatës dhe datën e synuar:
+```javascript
+// 1. Hap modalin
+const addBtn = cell.querySelector("button.jss-add-grade, #action-button");
+addBtn.click();
+await new Promise(r => setTimeout(r, 400));
 
-### 3. Selektorët Rezistentë (Mos u bazoni në ID Dinamike apo Kode Bundle)
-* Komponentët React Select gjenerojnë ID numerike të ndryshueshme (`react-select-N-input`).
-* Gjithmonë gjeni elementet përmes etiketave semantike:
-  * Etiketa `"Klasa"` $\rightarrow$ kontrolli bashkëngjitur $\rightarrow$ opsioni `7-A` ose `9-A`.
-  * Etiketa `"Lënda"` $\rightarrow$ kontrolli bashkëngjitur $\rightarrow$ opsioni i lëndës.
-  * Nën-skeda `"Temat"` (`#topics`) për të menaxhuar temat.
-  * Nën-skeda `"Regjistri"` (`#registry`) për matricën e nxënësve, notave dhe mungesave.
-* **Mos u bazoni kurrë në kod të minifikuar të bundle-it të JS**, sepse ai ndryshon në çdo përditësim të versionit të SMIP nga zhvilluesit. Ndërveproni vetëm me UI-në e dukshme dhe selektorët semantikë.
+// 2. Sigurohu që lloji është 'Vazhdueshem'
+const contRadio = document.getElementById("evaluation-type-continuous");
+if (contRadio && !contRadio.checked) contRadio.click();
+
+// 3. Kliko butonin e notës me event vendas të plotë (JO thirrje e zhveshur props.onClick!)
+const modal = document.querySelector(".modal-panel");
+const gradeBtn = Array.from(modal.querySelectorAll(".jss-grade-button"))
+  .find(b => b.innerText.trim() === targetGradeStr);
+gradeBtn.click();
+await new Promise(r => setTimeout(r, 400));
+```
+
+### 3. Ruajtja me Butonin Bulk Save (`#bulk-save-grades`)
+* Butoni **"Ruaj Ndryshimet"** (`#bulk-save-grades`) shfaqet në faqe **VETËM kur ka ndryshime të paruajtura** (`dirtyList.length > 0`).
+* Pasi vendosen të gjitha notat e klasës:
+  ```javascript
+  const saveBtn = document.getElementById("bulk-save-grades");
+  if (saveBtn && !saveBtn.disabled) {
+    saveBtn.click();
+    await new Promise(r => setTimeout(r, 3000)); // Pritja e kërkesës API bulkSave
+  }
+  ```
+* **Verifikimi:** Zhdukja e butonit `#bulk-save-grades` nga DOM konfirmon që ndryshimet u ruajtën me sukses.
+* Kryeni gjithmonë screenshot konfirmimi në `screenshots/notat_<klasa>_<muaji>.png`.
 
 ---
 
-## Parimi i Zgjidhjes Dinamike dhe Vetë-Riparimit (Self-Healing & Adaptive Fallback)
+## Ndryshimi i Vitit Shkollor në Header
 
-> [!IMPORTANT]
-> **Rregull Thelbësor:** Agjenti është plotësisht **dinamik dhe vetë-riparues**. Nëse një komandë, selektor apo skedar nuk gjendet, agjenti **NUK ndalet** dhe **NUK i kërkon përdoruesit të rregullojë kodin**. Agjenti gjen vetë zgjidhjen me këtë hierarki:
+Kur nevojiten të dhëna historike (notat e vitit të kaluar ose regjistrat e kaluar):
+1. Gjeni kontrollin e vitit shkollor në header (`Viti shkollor`).
+2. Klikoni mbi të dhe zgjidhni vitin e synuar (p.sh. `2025-2026`).
+3. Lexoni regjistrat dhe notat e nxënësve.
+4. Kthejeni vitin shkollor tek viti aktual mësimor (`2026-2027`).
 
-1. **Nëse ndryshon ndërfaqja e SMIP (Selektorët):**
-   * Agjenti kërkon me tekst (`button:has-text("Shto temë")`), me etiketa semantike (`label:has-text("Klasa")`), ose me struktura relative.
-2. **Nëse mungon plani mësimor:**
-   * Agjenti kërkon në `smip_docs/` $\rightarrow$ kërkon online te portalet e botuesve $\rightarrow$ nëse nuk shkarkohet dot, agjenti **gjeneron vetë temat zyrtare** bazuar në udhëzimet kurrikulare të MAS & ASCAP.
-3. **Nëse mungon kalendari i festave:**
-   * Agjenti nuk pret skedar: ekzekuton `holiday_finder.py`, i merr festat nga shërbimi zyrtar online ose i llogarit algoritmikisht dhe e vetë-krijon skedarin.
-4. **Nëse koordinatori nuk e ka hapur ende regjistrin:**
-   * Agjenti ruan të gjitha temat në format të gatshëm JSON/Markdown, mban sesionin aktiv të Chrome-it dhe njofton përdoruesin që gjithçka është gati për inserim sapo koordinatori të hapë regjistrin.
+---
+
+## Mbrojtja e të Dhënave Personale (Data Privacy)
+
+> [!CAUTION]
+> Skedarët që përmbajnë emra realë të nxënësve, numra amze apo nota individuale **NUK DUHET të bëhen kurrë commit në Git**. Sigurohuni që të gjithë skedarët e përpunimit (`notat_*.json`, `rezultati_*.json`, `verifikimi_*.json`, `screenshots/*.png`) të jenë të mbrojtur në `.gitignore`.
 
 ---
 
 ## Skedarët dhe Referencat Kryesore
 
 * Selektorët dhe ndërfaqja e SMIP: [`portal_selectors.md`](./references/portal_selectors.md)
-* Orari dhe ngarkesa javore: [`orari_mesimor.json`](./references/orari_mesimor.json)
+* Orari dhe ngarkesa javore: [`orari_shembull.json`](./references/orari_shembull.json)
 * Kalendari i festave zyrtare: `smip_docs/kalendari_pushimeve.json`
-* Shabllon orari mësimor: [`orari_shembull.json`](./references/orari_shembull.json)
+* Skripti CDP daemon për lidhjen e qëndrueshme me Chrome: `scripts/smip_cdp_worker.js`

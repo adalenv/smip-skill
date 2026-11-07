@@ -1,5 +1,5 @@
 name: smip-skill
-version: 1.0.0
+version: 1.1.0
 description: Menaxhimi dhe automatizimi i plotë i portalit SMIP (smip.al) për mësuesit në Shqipëri.
 author: Adalenv
 license: MIT
@@ -13,3 +13,4 @@ provides_commands:
   - smip-plan
   - smip-import
   - smip-search
+  - smip-grade
